@@ -3,13 +3,19 @@
     x:Class="BrewIoT.Client.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:BrewIoT.Client"
+    xmlns:devices="clr-namespace:BrewIoT.Client.Devices.Pages"
+    xmlns:recipes="clr-namespace:BrewIoT.Client.Recipes.Pages"
     Shell.FlyoutBehavior="Flyout"
     Title="BrewIoT.Client">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <Tab Title="Devices">
+            <ShellContent ContentTemplate="{DataTemplate devices:DeviceListPage}" />
+        </Tab>
+    
+        <Tab Title="Recipes">
+            <ShellContent ContentTemplate="{DataTemplate recipes:RecipeListPage}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

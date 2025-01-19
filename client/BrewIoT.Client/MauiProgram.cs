@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using BrewIoT.Client.Devices;
+using BrewIoT.Client.Recipes;
+using Microsoft.Extensions.Logging;
 
 namespace BrewIoT.Client;
 
@@ -18,6 +20,9 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+
+		builder.Services.AddDevices();
+		builder.Services.AddRecipes();
 
 		return builder.Build();
 	}

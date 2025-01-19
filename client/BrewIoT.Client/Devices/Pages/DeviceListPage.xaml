@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:devices="clr-namespace:BrewIoT.Client.Devices"
+    xmlns:viewModels="clr-namespace:BrewIoT.Client.Devices.ViewModels"
+    x:Class="BrewIoT.Client.Devices.Pages.DeviceListPage"
+    x:DataType="viewModels:DeviceListPageViewModel"
+    Title="Devices">
+    
+    <CollectionView 
+        ItemsSource="{Binding Devices}">
+        
+        <CollectionView.EmptyView>
+            <Label 
+                Text="{Binding NoDevicesMessage}" />
+        </CollectionView.EmptyView>
+        
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="devices:Device">
+                <Grid ColumnDefinitions="*,*">
+                    <Label Text="{Binding Name}" />
+                    
+                    <Label 
+                        Text="{Binding DeviceType}"
+                        Grid.Column="1" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+    
+</ContentPage>
