@@ -1,0 +1,71 @@
+@page
+@model BrewIoT.Server.Web.Pages.Recipes.CreateModel
+
+        @{
+        ViewData["Title"] = "Create";
+        }
+        
+        <h1>Create</h1>
+        
+    <h4>Recipe</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Recipe.Version" class="control-label"></label>
+                <input asp-for="Recipe.Version" class="form-control" />
+                <span asp-validation-for="Recipe.Version" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Recipe.Name" class="control-label"></label>
+                <input asp-for="Recipe.Name" class="form-control" />
+                <span asp-validation-for="Recipe.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Recipe.StepsText" class="control-label"></label>
+                @* <span asp-validation-for="Recipe.StepsText" class="text-danger"></span> *@
+                @Html.TextAreaFor(m => m.Recipe.StepsText)
+            </div>
+
+            @* <input type="button" id="add-link" value="Add" />
+            <div class="widget-wrapper">
+                @for (var i = 0; i < Model.Recipe.Steps.Count(); i++)
+                {
+
+
+                    <p>Action:</p>
+                    @Html.DropDownListFor(m => m.Recipe.Steps[i].Action, Html.GetEnumSelectList(typeof(RecipeAction)), "Select Action", new { @class = "form-control" })
+
+                    <p>Duration:</p>
+                    @Html.TextBoxFor(m => m.Recipe.Steps[i].Duration)
+
+                    <hr>
+                }
+
+            </div> *@
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+<script type="text/javascript">
+    
+    $('#add-link').on('click', function () {
+        var count = $('input[name*="name"]').length;
+        var html = '<p>Widget Name:</p><input id = "widgets_' + count + 'name" name = "widgets[' + count + '].name" type = "text" ><p> Widget Price:</p> <input id="widgets_' + count + '__price" name="widgets[' + count + '].price" type="text" ><hr>';
+        $('.widget-wrapper').append(html);
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
