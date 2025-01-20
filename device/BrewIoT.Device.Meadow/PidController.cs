@@ -18,8 +18,12 @@ namespace BrewIoT.Device.Meadow;
 
 public class PidController : PidControllerBase
 {
+    SoftPwmPort p;
+
     public override float CalculateControlOutput()
     {
+        p = new SoftPwmPort(MeadowApp.Device.Pins.D02, 100, 0.5f);
+        
         throw new NotImplementedException();
     }
 }

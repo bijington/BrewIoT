@@ -1,7 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using BrewIoT.Server.Data;
 using BrewIoT.Server.Web;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components.
@@ -9,8 +7,6 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<RecipeContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("RecipeContext") ?? throw new InvalidOperationException("Connection string 'RecipeContext' not found.")));
 
 builder.Services.AddHttpClient<DeviceApiClient>(client =>
     {

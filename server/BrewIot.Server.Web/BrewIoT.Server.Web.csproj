@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\BrewIoT.Shared.Models\BrewIoT.Shared.Models.csproj" />
     <ProjectReference Include="..\BrewIoT.Server.ServiceDefaults\BrewIoT.Server.ServiceDefaults.csproj" />
   </ItemGroup>
 

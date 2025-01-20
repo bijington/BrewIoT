@@ -1,0 +1,37 @@
+@BrewIoT.Server.ApiService_HostAddress = https://localhost:7207
+
+#GET {{BrewIoT.Server.ApiService_HostAddress}}/job/stage/1
+#Accept: application/json
+
+#POST https://localhost:7207/job
+#Content-Type: application/json
+#Accept-Language: en-US,en;q=0.5
+#
+#  {
+#    "id": 1,
+#    "device": {
+#      "id": 3,
+#      "name": "Jim",
+#      "deviceType": 0
+#    },
+#    "recipe": {
+#      "id": 2,
+#      "version": 0,
+#      "name": "Test",
+#      "steps": []
+#    }
+#  }
+
+#POST {{BrewIoT.Server.ApiService_HostAddress}}/Device/reading/1
+#Content-Type: application/json
+#Accept-Language: en-US,en;q=0.5
+#
+#  {
+#    "liquidTemperature": 1,
+#    "ambientTemperature": 21
+#  }
+
+ GET {{BrewIoT.Server.ApiService_HostAddress}}/device/latest-reading/1
+ 
+
+###

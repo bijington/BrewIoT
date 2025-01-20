@@ -1,7 +1,7 @@
 using BrewIoT.Shared.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BrewIoT.Server.Web.Pages.Recipes
+namespace BrewIoT.Server.Web.Pages.Devices
 {
     public class IndexModel : PageModel
     {
@@ -12,11 +12,11 @@ namespace BrewIoT.Server.Web.Pages.Recipes
             _deviceApiClient = deviceApiClient;
         }
 
-        public IList<Recipe> Recipe { get;set; } = default!;
+        public DeviceReading Reading { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Recipe = await _deviceApiClient.GetRecipesAsync();
+            Reading = await _deviceApiClient.GetLatestReadingAsync(1) ?? new DeviceReading();
         }
     }
 }

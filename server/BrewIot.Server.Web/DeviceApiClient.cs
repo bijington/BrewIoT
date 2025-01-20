@@ -1,7 +1,15 @@
+using BrewIoT.Shared.Models;
+
 namespace BrewIoT.Server.Web;
 
 public class DeviceApiClient(HttpClient httpClient)
 {
+    public async Task<DeviceReading?> GetLatestReadingAsync(int deviceId, CancellationToken cancellationToken = default)
+    {
+        return await httpClient.GetFromJsonAsync<DeviceReading>($"/device/latest-reading/{deviceId}",
+            cancellationToken);
+    }
+    
     public async Task<Device[]> GetDevicesAsync(int maxItems = 10, CancellationToken cancellationToken = default)
     {
         List<Device> devices = [];
@@ -22,17 +30,12 @@ public class DeviceApiClient(HttpClient httpClient)
         return devices.ToArray();
     }
 
-    public async Task<Recipe[]> GetRecipesAsync(int maxItems = 10, CancellationToken cancellationToken = default)
+    public async Task<Recipe[]> GetRecipesAsync(CancellationToken cancellationToken = default)
     {
         List<Recipe> recipes = [];
 
         await foreach (var recipe in httpClient.GetFromJsonAsAsyncEnumerable<Recipe>("/recipe", cancellationToken))
         {
-            if (recipes.Count >= maxItems)
-            {
-                break;
-            }
-
             if (recipe is not null)
             {
                 recipes.Add(recipe);
@@ -46,9 +49,5 @@ public class DeviceApiClient(HttpClient httpClient)
     {
         await httpClient.PostAsJsonAsync("/recipe", recipe, cancellationToken);
     }
-}
-
-public record Device(string Name, int Id)
-{
 }
 

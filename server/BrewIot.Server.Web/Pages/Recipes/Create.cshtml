@@ -23,11 +23,11 @@
                 <input asp-for="Recipe.Name" class="form-control" />
                 <span asp-validation-for="Recipe.Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Recipe.StepsText" class="control-label"></label>
-                @* <span asp-validation-for="Recipe.StepsText" class="text-danger"></span> *@
-                @Html.TextAreaFor(m => m.Recipe.StepsText)
-            </div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="Recipe.StepsText" class="control-label"></label> *@
+            @*     $1$ <span asp-validation-for="Recipe.StepsText" class="text-danger"></span> #1# *@
+            @*     @Html.TextAreaFor(m => m.Recipe.StepsText) *@
+            @* </div> *@
 
             @* <input type="button" id="add-link" value="Add" />
             <div class="widget-wrapper">

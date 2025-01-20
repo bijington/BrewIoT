@@ -1,22 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BrewIoT.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using BrewIoT.Server.Data;
-using BrewIoT.Server.Web;
 
 namespace BrewIoT.Server.Web.Pages.Recipes
 {
     public class CreateModel : PageModel
     {
-        private readonly DeviceApiClient _deviceApiClient;
+        private readonly DeviceApiClient deviceApiClient;
 
         public CreateModel(DeviceApiClient deviceApiClient)
         {
-            _deviceApiClient = deviceApiClient;
+            this.deviceApiClient = deviceApiClient;
         }
 
         public IActionResult OnGet()
@@ -35,15 +29,15 @@ namespace BrewIoT.Server.Web.Pages.Recipes
                 return Page();
             }
 
-            string[] lines = Recipe.StepsText.Split(
-                [Environment.NewLine],
-                StringSplitOptions.None
-            );
+            // string[] lines = Recipe.StepsText.Split(
+            //     [Environment.NewLine],
+            //     StringSplitOptions.None
+            // );
 
-            await _deviceApiClient.SaveRecipeAsync(Recipe);
+            await deviceApiClient.SaveRecipeAsync(Recipe);
             // _context.Recipe.Add(Recipe);
             // await _context.SaveChangesAsync();
-            Console.WriteLine("Recipe created: " + Recipe.StepsText);
+            //Console.WriteLine("Recipe created: " + Recipe.StepsText);
 
             return RedirectToPage("./Index");
         }

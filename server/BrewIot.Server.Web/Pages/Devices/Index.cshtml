@@ -1,0 +1,31 @@
+@page
+@model BrewIoT.Server.Web.Pages.Devices.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<div>
+    <h4>Reading</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Reading.LiquidTemperature)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Reading.LiquidTemperature)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Reading.AmbientTemperature)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Reading.AmbientTemperature)
+        </dd>
+    </dl>
+</div>
