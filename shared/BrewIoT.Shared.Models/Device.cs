@@ -54,9 +54,7 @@ public class DeviceReading
 
     public double AmbientTemperature { get; set; }
 
-    // public HeatingMode HeatingMode { get; set; }
-    //
-    // public HeatingMode Action { get; set; }
+    public DateTime Timestamp { get; set; }
 }
 
 // JobStage - effectively each step in the recipe

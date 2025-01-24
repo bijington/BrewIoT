@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using BrewIoT.Client.Devices.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BrewIoT.Client.Devices.ViewModels;
 
@@ -32,6 +34,21 @@ public partial class DeviceListPageViewModel : ObservableObject
             NoDevicesMessage = e.Message;
             throw;
         }
-        
+    }
+
+    [RelayCommand]
+    private async Task OnDeviceSelected(Device device)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync(
+                nameof(DevicePage),
+                new Dictionary<string, object> { { "Device", device } });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

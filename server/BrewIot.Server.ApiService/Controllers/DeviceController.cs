@@ -8,8 +8,18 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class DeviceController : ControllerBase
 {
-    public static List<Device> devices = [];
-    public static ConcurrentDictionary<int, IList<DeviceReading>> deviceReadings = [];
+    public static List<Device> devices = [new Device { Id = 1, Name = "Cooler box", DeviceType = DeviceType.Meadow }];
+    public static ConcurrentDictionary<int, IList<DeviceReading>> deviceReadings = 
+        new ConcurrentDictionary<int, IList<DeviceReading>>
+        {
+            [1] = 
+            [
+                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 15, Timestamp = DateTime.Now },
+                new DeviceReading { AmbientTemperature = 19.1, LiquidTemperature = 16, Timestamp = DateTime.Now },
+                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 17, Timestamp = DateTime.Now },
+                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 18, Timestamp = DateTime.Now }
+            ]
+        };
     
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -18,9 +28,10 @@ public class DeviceController : ControllerBase
     }
     
     [HttpGet("readings/{deviceId}")]
-    public async Task<IActionResult> GetReadings()
+    public async Task<IActionResult> GetReadings(int deviceId)
     {
-        return Ok(devices);
+        var readings = deviceReadings[deviceId];
+        return Ok(readings);
     }
     
     [HttpGet("latest-reading/{deviceId}")]

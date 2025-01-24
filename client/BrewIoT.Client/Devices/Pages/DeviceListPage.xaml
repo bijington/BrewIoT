@@ -10,7 +10,11 @@
     Title="Devices">
     
     <CollectionView 
-        ItemsSource="{Binding Devices}">
+        ItemsSource="{Binding Devices}"
+        SelectionMode="Single"
+        x:Name="DevicesCollection"
+        SelectionChangedCommand="{Binding DeviceSelectedCommand}"
+        SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={x:Reference DevicesCollection}, x:DataType=CollectionView}">
         
         <CollectionView.EmptyView>
             <Label 
