@@ -92,7 +92,7 @@ public class TemperatureController : IController
         AmbientTemperature = ambientTemperatureSensor.Temperature?.Celsius ?? double.NaN;
         LiquidTemperature = liquidTemperatureSensor.Temperature?.Celsius ?? double.NaN;
 
-        var currentJobStage = JobController.GetCurrentJobStage();
+        var currentJobStage = JobController.CurrentJobStage;
         targetTemperature = currentJobStage.TargetTemperature;
 
         HeatingMode = HeatingMode.Off;

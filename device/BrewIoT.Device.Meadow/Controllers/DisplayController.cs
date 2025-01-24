@@ -21,7 +21,7 @@ public class DisplayController : IController
 
     public void Write()
     {
-        var currentJobStage = JobController.GetCurrentJobStage();
+        var currentJobStage = JobController.CurrentJobStage;
 
         displayView.WriteLine(currentJobStage.Name, 0);
         displayView.WriteLine($"Ambient: {TemperatureController.AmbientTemperature}", 1);

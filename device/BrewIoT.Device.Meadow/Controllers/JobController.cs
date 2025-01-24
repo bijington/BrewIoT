@@ -5,25 +5,24 @@ namespace BrewIoT.Device.Meadow;
 
 public class JobController : IController
 {
-    private static JobStage currentJobStage;
+    public static JobStage CurrentJobStage { get; private set; }
+    private string url;
 
     public void Initialize(IReadOnlyDictionary<string, string> settings)
     {
-    }
+        url = settings["Job.Url"];
+        DeviceApiService.Initialize(url);
 
-    public static JobStage GetCurrentJobStage()
-    {
-        return currentJobStage ??= new JobStage
+        CurrentJobStage = new JobStage
         {
             Name = "Fermentation",
-            TargetTemperature = 24,
-            HeatingMode = HeatingMode.Heating
+            TargetTemperature = 24
         };
     }
 
     public Task Read()
     {
-        //currentJobStage = await DeviceApiService.GetCurrentJobStage();
+        //CurrentJobStage = await DeviceApiService.GetCurrentJobStage(url);
         return Task.CompletedTask;
     }
 
