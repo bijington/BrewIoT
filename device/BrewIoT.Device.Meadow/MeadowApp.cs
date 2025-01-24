@@ -1,5 +1,7 @@
-﻿using Meadow;
+﻿using BrewIoT.Device.Meadow.Controllers;
+using Meadow;
 using Meadow.Devices;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,22 +10,20 @@ namespace BrewIoT.Device.Meadow;
 public class MeadowApp : App<F7FeatherV2>
 {
     readonly IReadOnlyList<IController> controllers;
-    DisplayView displayView;
 
     public MeadowApp()
     {
         controllers = new List<IController>
         {
-            // new JobController(),
-            new TemperatureController(Device, Device.Pins)
+            //new JobController(),
+            new DisplayController(),
+            new TemperatureController()
         };
     }
 
     public override Task Initialize()
     {
         Resolver.Log.Info("Initialize...");
-
-        displayView = new DisplayView();
 
         foreach (var controller in controllers)
         {
@@ -33,34 +33,20 @@ public class MeadowApp : App<F7FeatherV2>
         return base.Initialize();
     }
 
-    public override Task Run()
+    public override async Task Run()
     {
         Resolver.Log.Info("Run...");
 
-        displayView.WriteLine($"Running app", 0);
-
-        foreach (var controller in controllers)
-        {
-            controller.Run();
-        }
-
-        return UpdateDisplay();
-    }
-
-    async Task UpdateDisplay()
-    {
-        Resolver.Log.Info("Cycle colors...");
-
         while (true)
         {
-            var currentJobStage = JobController.GetCurrentJobStage();
+            foreach (var controller in controllers)
+            {
+                await controller.Read();
 
-            displayView.WriteLine(currentJobStage.Name, 0);
-            displayView.WriteLine($"Ambient: {TemperatureController.AmbientTemperature}", 1);
-            displayView.WriteLine($"Liquid: {TemperatureController.LiquidTemperature}", 2);
-            displayView.WriteLine($"{TemperatureController.HeatingMode} to: {currentJobStage.TargetTemperature}", 3);
+                controller.Write();
+            }
 
-            await Task.Delay(1000);
+            await Task.Delay(TimeSpan.FromSeconds(5));
         }
     }
 }

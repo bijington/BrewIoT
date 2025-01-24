@@ -37,4 +37,4 @@ Logging:
 
 Temperature:
   UpdateInterval: 5
-  IsSimulated: true
+  IsSimulated: false
