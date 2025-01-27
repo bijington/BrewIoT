@@ -16,60 +16,60 @@ public static class DeviceApiService
         apiUri = uri;
     }
 
-    public static async Task<JobStage> GetCurrentJobStage()
-    {
-        using (HttpClient client = new HttpClient())
-        {
-            try
-            {
-                client.Timeout = new TimeSpan(0, 5, 0);
+    // public static async Task<JobStage> GetCurrentJobStage()
+    // {
+    //     using (HttpClient client = new HttpClient())
+    //     {
+    //         try
+    //         {
+    //             client.Timeout = new TimeSpan(0, 5, 0);
 
-                // TODO: add device id.
-                HttpResponseMessage response = await client.GetAsync($"{apiUri}/jobstage/1");
+    //             // TODO: add device id.
+    //             HttpResponseMessage response = await client.GetAsync($"{apiUri}/jobstage/1");
 
-                response.EnsureSuccessStatusCode();
-                string json = await response.Content.ReadAsStringAsync();
-                var values = System.Text.Json.JsonSerializer.Deserialize<JobStage>(json);
-                return values;
-            }
-            catch (TaskCanceledException)
-            {
-                Console.WriteLine("Request timed out.");
-                return null;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Request went sideways: {e.Message}");
-                return null;
-            }
-        }
-    }
+    //             response.EnsureSuccessStatusCode();
+    //             string json = await response.Content.ReadAsStringAsync();
+    //             var values = System.Text.Json.JsonSerializer.Deserialize<JobStage>(json);
+    //             return values;
+    //         }
+    //         catch (TaskCanceledException)
+    //         {
+    //             Console.WriteLine("Request timed out.");
+    //             return null;
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             Console.WriteLine($"Request went sideways: {e.Message}");
+    //             return null;
+    //         }
+    //     }
+    // }
 
-    public static async Task ReportReadings(int deviceId, Readings readings)
-    {
-        using (HttpClient client = new HttpClient())
-        {
-            try
-            {
-                client.Timeout = new TimeSpan(0, 5, 0);
+    // public static async Task ReportReadings(int deviceId, Readings readings)
+    // {
+    //     using (HttpClient client = new HttpClient())
+    //     {
+    //         try
+    //         {
+    //             client.Timeout = new TimeSpan(0, 5, 0);
 
-                var json = System.Text.Json.JsonSerializer.Serialize(readings);
-                var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json"); // use MediaTypeNames.Application.Json in Core 3.0+ and Standard 2.1+
+    //             var json = System.Text.Json.JsonSerializer.Serialize(readings);
+    //             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json"); // use MediaTypeNames.Application.Json in Core 3.0+ and Standard 2.1+
 
-                HttpResponseMessage response = await client.PostAsync($"{apiUri}/readings/{deviceId}", stringContent);
+    //             HttpResponseMessage response = await client.PostAsync($"{apiUri}/readings/{deviceId}", stringContent);
 
-                response.EnsureSuccessStatusCode();
-            }
-            catch (TaskCanceledException)
-            {
-                Console.WriteLine("Request timed out.");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Request went sideways: {e.Message}");
-            }
-        }
-    }
+    //             response.EnsureSuccessStatusCode();
+    //         }
+    //         catch (TaskCanceledException)
+    //         {
+    //             Console.WriteLine("Request timed out.");
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             Console.WriteLine($"Request went sideways: {e.Message}");
+    //         }
+    //     }
+    // }
 }
 
 public sealed class JobStage

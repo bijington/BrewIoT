@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "/dev/tty.usbmodem2063318052301",
+            "name": "/dev/tty.usbmodem3469386035361",
             "type": "meadow",
             "request": "launch",
             "preLaunchTask": "meadow: Build"

@@ -7,7 +7,7 @@
         <LangVersion>10.0</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="*" />
+        <!-- <PackageReference Include="System.Text.Json" Version="*" /> -->
         <PackageReference Include="Meadow.F7" Version="2.*" />
         <PackageReference Include="Meadow.Foundation" Version="2.*" />
         <PackageReference Include="Meadow.Foundation.Displays.Lcd.CharacterDisplay" Version="2.*" />

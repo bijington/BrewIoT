@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BrewIoT.Device.Meadow;
 
-public class MeadowApp : App<F7FeatherV2>
+public class MeadowApp : App<F7FeatherV1>
 {
     readonly IReadOnlyList<IController> controllers;
 
@@ -15,8 +15,9 @@ public class MeadowApp : App<F7FeatherV2>
     {
         controllers = new List<IController>
         {
-            //new JobController(),
+            new JobController(),
             new DisplayController(),
+            //new RelayController()
             new TemperatureController()
         };
     }
