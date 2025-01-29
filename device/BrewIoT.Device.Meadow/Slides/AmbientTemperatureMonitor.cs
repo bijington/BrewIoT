@@ -15,7 +15,7 @@ public class AmbientTemperatureMonitor
         ambientTemperatureSensor = new AnalogTemperature(
             analogPin: MeadowApp.Device.Pins.A01,
             sensorType: AnalogTemperature.KnownSensorType.LM35
-        );   
+        );
 
         Resolver.SensorService.RegisterSensor(ambientTemperatureSensor);
 

@@ -59,24 +59,30 @@ public class TemperatureController : IController
             ((SimulatedTemperatureSensor)ambientTemperatureSensor).StartSimulation(SimulationBehavior.Sine);
 
             liquidTemperatureSensor = new SimulatedTemperatureSensor(
-                new Temperature(19.5, Temperature.UnitType.Celsius),
-                new Temperature(19, Temperature.UnitType.Celsius),
-                new Temperature(21, Temperature.UnitType.Celsius),
-                SimulationBehavior.Sine);
+                new Temperature(17, Temperature.UnitType.Celsius),
+                new Temperature(17, Temperature.UnitType.Celsius),
+                new Temperature(23, Temperature.UnitType.Celsius));
 
-            ((SimulatedTemperatureSensor)liquidTemperatureSensor).StartSimulation(SimulationBehavior.Sine);
+            ((SimulatedTemperatureSensor)liquidTemperatureSensor).StartSimulation(SimulationBehavior.Sawtooth);
         }
         else
         {
             ambientTemperatureSensor = new AnalogTemperature(
                 MeadowApp.Device.CreateAnalogInputPort(MeadowApp.Device.Pins.A00, 10, System.TimeSpan.FromMilliseconds(40), new Voltage(5)),
-                sensorType: AnalogTemperature.KnownSensorType.LM35//,
+                sensorType: AnalogTemperature.KnownSensorType.Custom,
+                new AnalogTemperature.Calibration(22.0, 420, 30.0)//,
                 //new AnalogTemperature.Calibration(19.0, 384.615384615383, 15.0)
             );
 
+            // SensorCalibration.SampleReading +
+            //     (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
+
             liquidTemperatureSensor = new AnalogTemperature(
-                analogPin: MeadowApp.Device.Pins.A01,
-                sensorType: AnalogTemperature.KnownSensorType.LM35
+                analogPin: MeadowApp.Device.Pins.A04,
+                //MeadowApp.Device.CreateAnalogInputPort(MeadowApp.Device.Pins.A01, 10, System.TimeSpan.FromMilliseconds(40), new Voltage(5)),
+                sensorType: AnalogTemperature.KnownSensorType.Custom,
+                new AnalogTemperature.Calibration(22.0, 270, 10.0)//,
+                //new AnalogTemperature.Calibration(19.0, 384.615384615383, 15.0)
             );
         }
 
@@ -97,8 +103,8 @@ public class TemperatureController : IController
         liquidTemperatureSensor.StartUpdating();
 
         // Initialize in off state.
-        heaterRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D02, 1, 0.1f);
-        coolingRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D03, 1, 0.1f);
+        heaterRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D02, 1, 0.2f);
+        coolingRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D03, 1, 0.2f);
 
         heaterRelayPwm.Inverted = true;
         coolingRelayPwm.Inverted = true;
@@ -112,13 +118,17 @@ public class TemperatureController : IController
         var currentJobStage = JobController.CurrentJobStage;
         targetTemperature = currentJobStage.TargetTemperature;
 
-        // set our input and target on the PID calculator
-        pidController.ActualInput = (float)liquidTemperatureSensor.Temperature?.Celsius;
-        pidController.TargetInput = (float)this.targetTemperature;
+        if (double.IsNaN(LiquidTemperature) is false &&
+            double.IsNaN(targetTemperature) is false)
+        {
+            // set our input and target on the PID calculator
+            pidController.ActualInput = (float)LiquidTemperature;
+            pidController.TargetInput = (float)this.targetTemperature;
 
-        // get the appropriate power level
-        powerLevel = pidController.CalculateControlOutput();
-        PowerLevel = powerLevel;
+            // get the appropriate power level
+            powerLevel = pidController.CalculateControlOutput();
+            PowerLevel = powerLevel;
+        }
 
         Resolver.Log.Info($"Power level: {powerLevel}");
 
@@ -140,11 +150,6 @@ public class TemperatureController : IController
 
     private void SetRelayPower(SoftPwmPort softPwmPort, double powerLevel)
     {
-        // if (powerLevel == 0)
-        // {
-        //     //softPwmPort.Stop();
-        // }
-        // else
         if (softPwmPort.State is false)
         {
             softPwmPort.Start();

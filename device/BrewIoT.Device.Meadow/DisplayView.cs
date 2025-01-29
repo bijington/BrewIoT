@@ -9,11 +9,6 @@ public class DisplayView
     public DisplayView()
     {
         Initialize();
-
-        // display.WriteLine($"--------------------", 0);
-        // display.WriteLine($" WIFI Weather Clock ", 1);
-        // display.WriteLine($"     Loading...     ", 2);
-        // display.WriteLine($"--------------------", 3);
     }
 
     void Initialize()
@@ -29,14 +24,6 @@ public class DisplayView
             rows: 4, columns: 20
         );
     }
-
-    // public void UpdateDisplay(WeatherViewModel model)
-    // {
-    //     display.WriteLine($"{DateTime.Now.ToString("MMMM dd, yyyy")}", 0);
-    //     display.WriteLine($"{DateTime.Now.ToString("hh:mm:ss tt")}", 1);
-    //     display.WriteLine($"In: {model.IndoorTemperature.ToString("00")}C | Out: {model.OutdoorTemperature.ToString("00")}C", 2);
-    //     display.WriteLine($"{model.Weather}", 3);
-    // }
 
     public void WriteLine(string text, byte lineNumber) 
     {

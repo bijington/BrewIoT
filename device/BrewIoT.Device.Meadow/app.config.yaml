@@ -36,7 +36,6 @@ Logging:
 #    HealthMetricsIntervalMinutes: 60
 
 Temperature:
-  UpdateInterval: 5
   IsSimulated: true
 Job:
   Url: "https://localhost:7466/device"

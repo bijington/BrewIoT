@@ -15,9 +15,10 @@ public class MeadowApp : App<F7FeatherV1>
     {
         controllers = new List<IController>
         {
+            //new Pt100Controller()
             new JobController(),
             new DisplayController(),
-            //new RelayController()
+            // //new RelayController()
             new TemperatureController()
         };
     }
@@ -43,7 +44,10 @@ public class MeadowApp : App<F7FeatherV1>
             foreach (var controller in controllers)
             {
                 await controller.Read();
+            }
 
+            foreach (var controller in controllers)
+            {
                 controller.Write();
             }
 
