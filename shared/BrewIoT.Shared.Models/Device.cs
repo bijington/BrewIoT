@@ -27,7 +27,7 @@ public class Recipe
     [Required]
     public string Name { get; set; } = string.Empty;
 
-    public List<RecipeStep> Steps { get; set; } = new List<RecipeStep>();
+    public List<RecipeStep> Steps { get; set; } = [];
 }
 
 public class RecipeStep
@@ -36,6 +36,8 @@ public class RecipeStep
 
     [Required]
     public string Name { get; set; } = string.Empty;
+    
+    public float? TargetTemperature { get; set; }
 }
 
 // Job - effectively the recipe

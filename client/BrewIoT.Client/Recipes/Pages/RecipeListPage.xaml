@@ -9,6 +9,10 @@
     x:DataType="viewModels:RecipeListPageViewModel"
     Title="Recipes">
     
+    <ContentPage.ToolbarItems>  
+        <ToolbarItem Text="Add" Command="{Binding AddCommand}" />
+    </ContentPage.ToolbarItems>
+    
     <CollectionView 
         ItemsSource="{Binding Recipes}">
         

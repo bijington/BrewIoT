@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using BrewIoT.Client.Recipes.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BrewIoT.Client.Recipes.ViewModels;
@@ -33,5 +34,10 @@ public partial class RecipeListPageViewModel : ObservableObject
             throw;
         }
         
+    }
+
+    private async Task OnAdd()
+    {
+        await Shell.Current.GoToAsync($"{nameof(RecipePage)}");
     }
 }

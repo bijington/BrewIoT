@@ -11,8 +11,12 @@ public static class RecipesServiceExtensions
         services.AddRefitClient<IRecipeApiService>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7466"));
         
+        Routing.RegisterRoute(nameof(RecipePage), typeof(RecipePage));
+        
         return services
             .AddTransient<RecipeListPage>()
-            .AddTransient<RecipeListPageViewModel>();
+            .AddTransient<RecipeListPageViewModel>()
+            .AddTransient<RecipePage>()
+            .AddTransient<RecipePageViewModel>();
     }
 }

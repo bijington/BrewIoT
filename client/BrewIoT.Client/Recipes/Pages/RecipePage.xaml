@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:recipes="clr-namespace:BrewIoT.Client.Recipes"
+    xmlns:viewModels="clr-namespace:BrewIoT.Client.Recipes.ViewModels"
+    x:Class="BrewIoT.Client.Recipes.Pages.RecipePage"
+    Shell.PresentationMode="ModalAnimated"
+    x:DataType="viewModels:RecipePageViewModel"
+    Title="{Binding Name}">
+    
+    <ContentPage.ToolbarItems>  
+        <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+    </ContentPage.ToolbarItems>
+    
+</ContentPage>

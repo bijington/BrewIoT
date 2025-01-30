@@ -15,7 +15,7 @@ public class LiquidTemperatureMonitor
             MeadowApp.Device.CreateSpiBus(),
             MeadowApp.Device.CreateDigitalOutputPort(MeadowApp.Device.Pins.D03),
             Max31865TemperatureSensor.KnownSensorType.PT100
-        ); 
+        );
 
         Resolver.SensorService.RegisterSensor(liquidTemperatureSensor);
 

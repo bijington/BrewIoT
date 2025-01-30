@@ -29,15 +29,15 @@ public class TemperatureController : IController
 
     public static double PowerLevel { get; private set; }
 
-    private double targetTemperature;
+    public static double TargetTemperature { get; private set; } = double.NaN;
 
     public TemperatureController()
     {
         pidController = new StandardPidController();
-        pidController.ProportionalComponent = .5f; // proportional
-        pidController.IntegralComponent = .55f; // integral time minutes
+        pidController.ProportionalComponent = .15f; // proportional
+        pidController.IntegralComponent = .35f; // integral time minutes
         pidController.DerivativeComponent = 0f; // derivative time in minutes
-        pidController.OutputMin = -1.0f; // 0% power minimum
+        pidController.OutputMin = -0f; // 0% power minimum
         pidController.OutputMax = 1.0f; // 100% power max
         pidController.OutputTuningInformation = true;
     }
@@ -68,21 +68,13 @@ public class TemperatureController : IController
         else
         {
             ambientTemperatureSensor = new AnalogTemperature(
-                MeadowApp.Device.CreateAnalogInputPort(MeadowApp.Device.Pins.A00, 10, System.TimeSpan.FromMilliseconds(40), new Voltage(5)),
-                sensorType: AnalogTemperature.KnownSensorType.Custom,
-                new AnalogTemperature.Calibration(22.0, 420, 30.0)//,
-                //new AnalogTemperature.Calibration(19.0, 384.615384615383, 15.0)
+                analogPin: MeadowApp.Device.Pins.A00,
+                sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-            // SensorCalibration.SampleReading +
-            //     (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
-
             liquidTemperatureSensor = new AnalogTemperature(
-                analogPin: MeadowApp.Device.Pins.A04,
-                //MeadowApp.Device.CreateAnalogInputPort(MeadowApp.Device.Pins.A01, 10, System.TimeSpan.FromMilliseconds(40), new Voltage(5)),
-                sensorType: AnalogTemperature.KnownSensorType.Custom,
-                new AnalogTemperature.Calibration(22.0, 270, 10.0)//,
-                //new AnalogTemperature.Calibration(19.0, 384.615384615383, 15.0)
+                analogPin: MeadowApp.Device.Pins.A01,
+                sensorType: AnalogTemperature.KnownSensorType.LM35
             );
         }
 
@@ -103,8 +95,8 @@ public class TemperatureController : IController
         liquidTemperatureSensor.StartUpdating();
 
         // Initialize in off state.
-        heaterRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D02, 1, 0.2f);
-        coolingRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D03, 1, 0.2f);
+        heaterRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D15, 1, 0.2f);
+        coolingRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D14, 1, 0.2f);
 
         heaterRelayPwm.Inverted = true;
         coolingRelayPwm.Inverted = true;
@@ -116,21 +108,21 @@ public class TemperatureController : IController
         LiquidTemperature = liquidTemperatureSensor.Temperature?.Celsius ?? double.NaN;
 
         var currentJobStage = JobController.CurrentJobStage;
-        targetTemperature = currentJobStage.TargetTemperature;
+        TargetTemperature = currentJobStage.TargetTemperature;
 
         if (double.IsNaN(LiquidTemperature) is false &&
-            double.IsNaN(targetTemperature) is false)
+            double.IsNaN(TargetTemperature) is false)
         {
             // set our input and target on the PID calculator
             pidController.ActualInput = (float)LiquidTemperature;
-            pidController.TargetInput = (float)this.targetTemperature;
+            pidController.TargetInput = (float)TargetTemperature;
 
             // get the appropriate power level
             powerLevel = pidController.CalculateControlOutput();
             PowerLevel = powerLevel;
         }
 
-        Resolver.Log.Info($"Power level: {powerLevel}");
+        // Resolver.Log.Info($"Power level: {powerLevel}");
 
         return Task.CompletedTask;
     }
@@ -144,8 +136,21 @@ public class TemperatureController : IController
 
         ReportReadings();
 
-        SetRelayPower(heaterRelayPwm, Math.Clamp(powerLevel, 0, 1));
-        SetRelayPower(coolingRelayPwm, Math.Abs(Math.Clamp(powerLevel, -1, 0)));
+        if (LiquidTemperature < TargetTemperature)
+        {
+            SetRelayPower(heaterRelayPwm, powerLevel);
+            SetRelayPower(coolingRelayPwm, 0);
+        }
+        else if (LiquidTemperature > TargetTemperature)
+        {
+            SetRelayPower(heaterRelayPwm, 0);
+            SetRelayPower(coolingRelayPwm, Math.Abs(powerLevel));
+        }
+        else
+        {
+            SetRelayPower(heaterRelayPwm, 0);
+            SetRelayPower(coolingRelayPwm, 0);
+        }
     }
 
     private void SetRelayPower(SoftPwmPort softPwmPort, double powerLevel)
@@ -157,7 +162,7 @@ public class TemperatureController : IController
 
         softPwmPort.DutyCycle = powerLevel;
 
-        Resolver.Log.Info($"Relay power: {powerLevel} for {softPwmPort.Pin.Name} Target: {targetTemperature} Liquid: {LiquidTemperature} Ambient: {AmbientTemperature}");
+        Resolver.Log.Info($"Relay power: {powerLevel} for {softPwmPort.Pin.Name} Target: {TargetTemperature} Liquid: {LiquidTemperature} Ambient: {AmbientTemperature}");
     }
 
     private void ReportReadings()
