@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
@@ -24,13 +25,14 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
     {
         this.spiBus = spiBus;
         this.spiCommsChipSelect = spiCommsChipSelect;
-        this.spiComms = new SpiCommunications(spiBus, spiCommsChipSelect, frequency);
+        this.spiComms = new SpiCommunications(spiBus, spiCommsChipSelect, frequency, SpiClockConfiguration.Mode.Mode1);
+        
         this.knownSensorType = knownSensorType;
         this.rtdConverter = rtdConverter;
     }
 
     public Max31865TemperatureSensor(ISpiBus spiBus, IDigitalOutputPort spiCommsChipSelect, KnownSensorType knownSensorType)
-        : this(spiBus, spiCommsChipSelect, new(10_000, Frequency.UnitType.Kilohertz), knownSensorType, new DirectMathematicalMethod())
+        : this(spiBus, spiCommsChipSelect, new(5_000_000, Frequency.UnitType.Hertz), knownSensorType, new DirectMathematicalMethod())
     {
     }
 
@@ -42,52 +44,95 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
     private async Task<ushort> ReadInternal()
     {
         ClearFault();
-        ApplyConfiguration(Configuration.Bias);
+        Enable(Configuration.Bias);
         await Task.Delay(10);
 
-        ApplyConfiguration(Configuration.OneShot);
+        Enable(Configuration.OneShot);
         await Task.Delay(65);
 
-        var bytes = ArrayPool<byte>.Shared.Rent(16);
-        this.spiComms.ReadRegister(Registers.RtdMsb, bytes);
+        // Span<byte> readBuffer = stackalloc byte[2];
+        // this.spiComms.ReadRegister(Registers.RtdMsb, readBuffer);
 
         var rtd = this.spiComms.ReadRegisterAsUShort(Registers.RtdMsb, ByteOrder.BigEndian);
+        //var rtd = (ushort)(ReadUInt16BigEndian(readBuffer) >> 1);
 
         // Disable bias current again to reduce self-heating.
-        RemoveConfiguration(Configuration.Bias);
+        Disable(Configuration.Bias);
 
-        // remove the fault bit
+        // // remove the fault bit
         rtd >>= 1;
 
         return rtd;
     }
 
+    public static ushort ReadUInt16BigEndian(ReadOnlySpan<byte> source)
+        {
+            //return BitConverter.IsLittleEndian ?
+                return ReverseEndianness(MemoryMarshal.Read<ushort>(source));// :
+              //  MemoryMarshal.Read<ushort>(source);
+        }
+
+        public static ushort ReverseEndianness(ushort value)
+        {
+            // Don't need to AND with 0xFF00 or 0x00FF since the final
+            // cast back to ushort will clear out all bits above [ 15 .. 00 ].
+            // This is normally implemented via "movzx eax, ax" on the return.
+            // Alternatively, the compiler could elide the movzx instruction
+            // entirely if it knows the caller is only going to access "ax"
+            // instead of "eax" / "rax" when the function returns.
+
+            return (ushort)((value >> 8) + (value << 8));
+        }
+
     public void ClearFault()
     {
-        byte value = this.spiComms.ReadRegister(Registers.Configuration);
+        byte value = this.spiComms.ReadRegister(Registers.ConfigurationRead);
 
-        value &= 0x2C;
+        // Page 14 (Fault Status Clear (D1)) of the technical documentation
+        value = (byte)(value & ~0x2C);
         value |= Configuration.FaultStat;
 
-        this.spiComms.WriteRegister(Registers.Configuration, value);
+        this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
     }
 
-    private void ApplyConfiguration(byte register)
+    private void Enable(byte configuration)
     {
-        byte value = this.spiComms.ReadRegister(Registers.Configuration);
+        byte value = this.spiComms.ReadRegister(Registers.ConfigurationRead);
 
-        value |= register;
+        byte before = value;
 
-        this.spiComms.WriteRegister(Registers.Configuration, value);
+        value |= configuration;
+
+        Resolver.Log.Info($"Enable: before={before} after={value}");
+
+        this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
+    }
+
+    private void Disable(byte configuration)
+    {
+        byte value = this.spiComms.ReadRegister(Registers.ConfigurationRead);
+
+byte before = value;
+
+        value &= (byte)~configuration;
+
+        Resolver.Log.Info($"Remove: before={before} after={value}");
+
+        this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
     }
 
     public void Initialize()
     {
-        SetWires(Wires.ThreeWire);
-        RemoveConfiguration(Configuration.Bias);
-        RemoveConfiguration(Configuration.ModeAuto);
-        SetThresholds(0, 0xFFFF);
-        ClearFault();
+        byte value = Configuration.ThreeWire | Configuration.Filter50Hz;
+
+        Resolver.Log.Info($"Initialize: {value}");
+
+        this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
+        // SetWires(Wires.TwoWire);
+        // RemoveConfiguration(Configuration.Bias);
+        // RemoveConfiguration(Configuration.ModeAuto);
+        // // SetThresholds(0, 0xFFFF);
+        // ClearFault();
     }
 
     private void SetThresholds(ushort lower, ushort upper)
@@ -100,7 +145,7 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
 
     private void SetWires(Wires wires)
     {
-        byte t = this.spiComms.ReadRegister(Registers.Configuration);
+        byte t = this.spiComms.ReadRegister(Registers.ConfigurationRead);
 
         if (wires == Wires.ThreeWire)
         {
@@ -109,19 +154,10 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
         else
         {
             // 2 or 4 wire
-            //t &= (byte)~Configuration.ThreeWire;
+            t = (byte)(t & ~Configuration.ThreeWire);
         }
 
-        this.spiComms.WriteRegister(Registers.Configuration, t);
-    }
-
-    private void RemoveConfiguration(byte register)
-    {
-        byte value = this.spiComms.ReadRegister(Registers.Configuration);
-
-        value &= (byte)~register;
-
-        this.spiComms.WriteRegister(Registers.Configuration, value);
+        this.spiComms.WriteRegister(Registers.ConfigurationWrite, t);
     }
 
     protected override async Task<Temperature> ReadSensor()
@@ -193,20 +229,20 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
 
     private static class Configuration
     {
-        public const byte Bias = 0x80;
-        public const byte ModeAuto = 0x40;
+        public const byte Bias = 0b_1000_0000;
+        public const byte ModeAuto = 0b_0100_0000;
         public const byte ModeOff = 0x00;
-        public const byte OneShot = 0x20;
-        public const byte ThreeWire = 0x10;
-        public const byte TwoFourWire = 0x00;
-        public const byte FaultStat = 0x02;
-        public const byte Filter50Hz = 0x01;
-        public const byte Filter60Hz = 0x00;
+        public const byte OneShot = 0b_0010_0000;
+        public const byte ThreeWire = 0b_0001_0000;
+        public const byte TwoFourWire = 0b_0000_0000;
+        public const byte FaultStat = 0b_0000_0010;
+        public const byte Filter50Hz = 0b_0000_0001;
+        public const byte Filter60Hz = 0b_0000_0000;
     }
 
     private static class Registers
     {
-        public const byte Configuration = 0x00;
+        public const byte ConfigurationRead = 0x00;
         public const byte RtdMsb = 0x01;
         public const byte RtdLsb = 0x02;
         public const byte HFaultMsb = 0x03;
@@ -214,6 +250,7 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
         public const byte LFaultMsb = 0x05;
         public const byte LFaultLsb = 0x06;
         public const byte FaultStat = 0x07;
+        public const byte ConfigurationWrite = 0x80;
     }
 
     public static class Fault
@@ -233,11 +270,10 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
         FourWire = 0
     }
 
-    public enum KnownSensorType
+    public enum KnownSensorType : short
     {
         PT100 = 100,
-        PT1000 = 1000,
-        Custom
+        PT1000 = 1000
     }
 }
 

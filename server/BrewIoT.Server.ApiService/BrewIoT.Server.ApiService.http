@@ -31,7 +31,10 @@
 #    "ambientTemperature": 21
 #  }
 
- GET {{BrewIoT.Server.ApiService_HostAddress}}/device/latest-reading/1
+ #GET {{BrewIoT.Server.ApiService_HostAddress}}/device/latest-reading/1
+
+GET https://api.football-data.org/v4/competitions/
+X-Auth-Token: f6a950761843420499cae7dab7bf8931
  
 
 ###

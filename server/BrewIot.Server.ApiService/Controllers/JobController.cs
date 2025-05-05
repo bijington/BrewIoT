@@ -1,5 +1,6 @@
 using BrewIoT.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -7,6 +8,15 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class JobController : ControllerBase
 {
+    private readonly NpgsqlConnection connection;
+    private readonly ILogger<JobController> logger;
+
+    public JobController(NpgsqlConnection connection, ILogger<JobController> logger)
+    {
+        this.connection = connection;
+        this.logger = logger;
+    }
+    
     static readonly List<Job> jobs = [new Job { Id = 1, Device = new Device { Id = 3 }, Recipe = new Recipe { Id = 2, Name = "Test" } }];
     
     [HttpGet]

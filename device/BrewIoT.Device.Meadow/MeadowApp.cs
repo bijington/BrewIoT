@@ -15,11 +15,10 @@ public class MeadowApp : App<F7FeatherV2>
     {
         controllers = new List<IController>
         {
-            //new Pt100Controller()
-            new JobController(),
-            // //new RelayController()
-            new TemperatureController(),
-            new DisplayController()
+            //new JobController(),
+            // new TemperatureController(),
+            // new DisplayController()
+            new Pt100Controller()
         };
     }
 

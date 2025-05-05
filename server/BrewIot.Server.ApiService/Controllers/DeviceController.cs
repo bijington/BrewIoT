@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Mvc;
 using BrewIoT.Shared.Models;
+using Npgsql;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -8,6 +9,15 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class DeviceController : ControllerBase
 {
+    private readonly NpgsqlConnection connection;
+    private readonly ILogger<DeviceController> logger;
+
+    public DeviceController(NpgsqlConnection connection, ILogger<DeviceController> logger)
+    {
+        this.connection = connection;
+        this.logger = logger;
+    }
+    
     public static List<Device> devices = [new Device { Id = 1, Name = "Cooler box", DeviceType = DeviceType.Meadow }];
     public static ConcurrentDictionary<int, IList<DeviceReading>> deviceReadings = 
         new ConcurrentDictionary<int, IList<DeviceReading>>
@@ -65,20 +75,4 @@ public class DeviceController : ControllerBase
         
         return Ok(deviceReading);
     }
-    
-//     [HttpPost]
-//     public async Task<IActionResult> AssignJob([FromBody] Device device)
-//     {
-//         devices.Add(device);
-//         
-//         return Ok(device);
-//     }
-//
-// app.MapPost("/device/assign-job", (Job job) =>
-// {
-//     // TODO: check whether device already has an active job.
-//     jobs.Add(job);
-//
-//     return Results.Created($"/job/{job.Id}", job);
-// });
 }

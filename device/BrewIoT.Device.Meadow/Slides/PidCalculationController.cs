@@ -16,7 +16,7 @@ public class PidCalculationController
         pidController.ProportionalComponent = .5f; // proportional
         pidController.IntegralComponent = .55f; // integral time minutes
         pidController.DerivativeComponent = 0f; // derivative time in minutes
-        pidController.OutputMin = -1.0f; // -100% power minimum == 100% cooling
+        pidController.OutputMin = 0f; // 0% power minimum
         pidController.OutputMax = 1.0f; // 100% power max
         pidController.OutputTuningInformation = true;
     }

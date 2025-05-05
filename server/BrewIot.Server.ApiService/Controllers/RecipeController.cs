@@ -1,5 +1,7 @@
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using BrewIoT.Shared.Models;
+using Npgsql;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -7,18 +9,40 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class RecipeController : ControllerBase
 {
-    public static readonly List<Recipe> recipes = [];
+    private readonly NpgsqlConnection connection;
+    private readonly ILogger<RecipeController> logger;
+
+    public RecipeController(NpgsqlConnection connection, ILogger<RecipeController> logger)
+    {
+        this.connection = connection;
+        this.logger = logger;
+    }
     
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IEnumerable<Recipe>> Get()
     {
-        return Ok(recipes);
+        try
+        {
+            const string sql =
+                """
+                    SELECT Id, Name, Version
+                    FROM Recipe
+                """;
+
+            return await connection.QueryAsync<Recipe>(sql);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, ex.Message);
+            return Enumerable.Empty<Recipe>();
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Recipe recipe)
     {
-        recipes.Add(recipe);
+        //connection.
+        //recipes.Add(recipe);
         
         return Ok(recipe);
     }
