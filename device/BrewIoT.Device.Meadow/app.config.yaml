@@ -36,7 +36,7 @@ Logging:
 #    HealthMetricsIntervalMinutes: 60
 
 Temperature:
-  IsSimulated: true
+  IsSimulated: false
 Job:
   Url: "https://localhost:7466/device"
   #"https://api.brewiot.com/api/Job"

@@ -16,7 +16,7 @@ public class JobController : IController
         CurrentJobStage = new JobStage
         {
             Name = "Fermentation",
-            TargetTemperature = 21
+            TargetTemperature = 26
         };
     }
 

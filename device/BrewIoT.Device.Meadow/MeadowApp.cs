@@ -13,13 +13,13 @@ public class MeadowApp : App<F7FeatherV2>
 
     public MeadowApp()
     {
-        controllers = new List<IController>
-        {
-            //new JobController(),
-            // new TemperatureController(),
-            // new DisplayController()
-            new Pt100Controller()
-        };
+        controllers = 
+        [
+            new JobController(),
+            new TemperatureController(),
+            new DisplayController()
+            //new Pt100Controller()
+        ];
     }
 
     public override Task Initialize()

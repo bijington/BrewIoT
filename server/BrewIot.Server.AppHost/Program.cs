@@ -19,12 +19,12 @@ var postgres = builder.AddPostgres("postgres")
 var beerDb = postgres.AddDatabase(beerDbName);
 
 var apiService = builder.AddProject<Projects.BrewIoT_Server_ApiService>("apiservice")
-    .WithReference(beerDb)
-    .WaitFor(beerDb);
+    .WithReference(beerDb);
+    //.WaitFor(beerDb);
 
 builder.AddProject<Projects.BrewIoT_Server_Web>("webfrontend")
     .WithExternalHttpEndpoints()
-    .WithReference(apiService)
-    .WaitFor(apiService);
+    .WithReference(apiService);
+    //.WaitFor(apiService);
 
 builder.Build().Run();

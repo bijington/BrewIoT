@@ -26,7 +26,7 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
         this.spiBus = spiBus;
         this.spiCommsChipSelect = spiCommsChipSelect;
         this.spiComms = new SpiCommunications(spiBus, spiCommsChipSelect, frequency, SpiClockConfiguration.Mode.Mode1);
-        
+
         this.knownSensorType = knownSensorType;
         this.rtdConverter = rtdConverter;
     }
@@ -50,11 +50,7 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
         Enable(Configuration.OneShot);
         await Task.Delay(65);
 
-        // Span<byte> readBuffer = stackalloc byte[2];
-        // this.spiComms.ReadRegister(Registers.RtdMsb, readBuffer);
-
-        var rtd = this.spiComms.ReadRegisterAsUShort(Registers.RtdMsb, ByteOrder.BigEndian);
-        //var rtd = (ushort)(ReadUInt16BigEndian(readBuffer) >> 1);
+        var rtd = this.spiComms.ReadRegisterAsUShort(Registers.RtdMsb, ByteOrder.LittleEndian);
 
         // Disable bias current again to reduce self-heating.
         Disable(Configuration.Bias);
@@ -64,25 +60,6 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
 
         return rtd;
     }
-
-    public static ushort ReadUInt16BigEndian(ReadOnlySpan<byte> source)
-        {
-            //return BitConverter.IsLittleEndian ?
-                return ReverseEndianness(MemoryMarshal.Read<ushort>(source));// :
-              //  MemoryMarshal.Read<ushort>(source);
-        }
-
-        public static ushort ReverseEndianness(ushort value)
-        {
-            // Don't need to AND with 0xFF00 or 0x00FF since the final
-            // cast back to ushort will clear out all bits above [ 15 .. 00 ].
-            // This is normally implemented via "movzx eax, ax" on the return.
-            // Alternatively, the compiler could elide the movzx instruction
-            // entirely if it knows the caller is only going to access "ax"
-            // instead of "eax" / "rax" when the function returns.
-
-            return (ushort)((value >> 8) + (value << 8));
-        }
 
     public void ClearFault()
     {
@@ -99,11 +76,7 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
     {
         byte value = this.spiComms.ReadRegister(Registers.ConfigurationRead);
 
-        byte before = value;
-
         value |= configuration;
-
-        Resolver.Log.Info($"Enable: before={before} after={value}");
 
         this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
     }
@@ -112,25 +85,22 @@ public class Max31865TemperatureSensor : SamplingSensorBase<Temperature>, ITempe
     {
         byte value = this.spiComms.ReadRegister(Registers.ConfigurationRead);
 
-byte before = value;
-
         value &= (byte)~configuration;
-
-        Resolver.Log.Info($"Remove: before={before} after={value}");
 
         this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
     }
 
     public void Initialize()
     {
-        byte value = Configuration.ThreeWire | Configuration.Filter50Hz;
+        byte value = Configuration.TwoFourWire | Configuration.Filter60Hz;
 
         Resolver.Log.Info($"Initialize: {value}");
 
         this.spiComms.WriteRegister(Registers.ConfigurationWrite, value);
+
         // SetWires(Wires.TwoWire);
-        // RemoveConfiguration(Configuration.Bias);
-        // RemoveConfiguration(Configuration.ModeAuto);
+        // Disable(Configuration.Bias);
+        // Disable(Configuration.ModeAuto);
         // // SetThresholds(0, 0xFFFF);
         // ClearFault();
     }

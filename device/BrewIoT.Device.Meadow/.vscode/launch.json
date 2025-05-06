@@ -5,10 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Deploy",
+            "name": "/dev/tty.usbmodem2063318052301",
             "type": "meadow",
             "request": "launch",
-            "preLaunchTask": "meadow: Build"
+            "preLaunchTask": "meadow: Build",
+            "deviceInfo": {
+                "name": "/dev/tty.usbmodem2063318052301",
+                "serial": "/dev/tty.usbmodem2063318052301"
+            }
         }
     ]
 }

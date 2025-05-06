@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Meadow.Foundation.Controllers.Pid;
 using Meadow.Hardware;
 using System;
+using BrewIoT.Device.Meadow.Sensors;
 
 namespace BrewIoT.Device.Meadow;
 
@@ -72,21 +73,12 @@ public class TemperatureController : IController
                 sensorType: AnalogTemperature.KnownSensorType.LM35
             );
 
-            liquidTemperatureSensor = new AnalogTemperature(
-                analogPin: MeadowApp.Device.Pins.A01,
-                sensorType: AnalogTemperature.KnownSensorType.LM35
+            liquidTemperatureSensor = new Max31865TemperatureSensor(
+                MeadowApp.Device.CreateSpiBus(),
+                MeadowApp.Device.CreateDigitalOutputPort(MeadowApp.Device.Pins.D03),
+                Max31865TemperatureSensor.KnownSensorType.PT100
             );
         }
-
-        // var analogInput = MeadowApp.Device.CreateAnalogInputPort(MeadowApp.Device.Pins.A00, 10, System.TimeSpan.FromSeconds(1), new Voltage(5));
-        //     analogInput.Updated += (s, e) =>
-        //     {
-        //         var voltage = e.New;
-        //         Resolver.Log.Info($"Voltage: {voltage.Millivolts}mv");
-        //         AmbientTemperature = voltage.Millivolts;
-        //     };
-
-        //     analogInput.StartUpdating();
 
         Resolver.SensorService.RegisterSensor(ambientTemperatureSensor);
         Resolver.SensorService.RegisterSensor(liquidTemperatureSensor);
