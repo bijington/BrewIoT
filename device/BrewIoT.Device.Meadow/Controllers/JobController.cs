@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BrewIoT.Device.Api;
 
-namespace BrewIoT.Device.Meadow;
+namespace BrewIoT.Device.Meadow.Controllers;
 
 public class JobController : IController
 {
@@ -20,10 +21,9 @@ public class JobController : IController
         };
     }
 
-    public Task Read()
+    public async Task Read()
     {
-        //CurrentJobStage = await DeviceApiService.GetCurrentJobStage(url);
-        return Task.CompletedTask;
+        CurrentJobStage = await DeviceApiService.GetCurrentJobStage();
     }
 
     public void Write()

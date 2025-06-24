@@ -6,7 +6,7 @@ namespace BrewIoT.Device.Meadow.Slides;
 public class PwmController
 {
     private SoftPwmPort heaterRelayPwm;
-    private readonly StandardPidController pidController;
+    private readonly StandardPidController pidController = new StandardPidController();
 
     public void Initialize()
     {

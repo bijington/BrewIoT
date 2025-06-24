@@ -4,7 +4,7 @@ using Meadow;
 using Meadow.Foundation.Relays;
 using Meadow.Peripherals.Relays;
 
-namespace BrewIoT.Device.Meadow;
+namespace BrewIoT.Device.Meadow.Controllers;
 
 // Put enough logic into the IoT device to make it safely handle scenarios but not so much that it becomes a monolith.
 // Put the control logic into the next level up.

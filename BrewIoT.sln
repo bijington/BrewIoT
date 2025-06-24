@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{A8DF2D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrewIoT.Shared.Models", "shared\BrewIoT.Shared.Models\BrewIoT.Shared.Models.csproj", "{4780FBB0-92D1-4915-A529-B72D1936755E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrewIoT.Device.Api", "BrewIoT.Device.Api\BrewIoT.Device.Api.csproj", "{993F0327-507B-4422-B5C2-0B11CBA1FF83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{4780FBB0-92D1-4915-A529-B72D1936755E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4780FBB0-92D1-4915-A529-B72D1936755E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4780FBB0-92D1-4915-A529-B72D1936755E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{993F0327-507B-4422-B5C2-0B11CBA1FF83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{993F0327-507B-4422-B5C2-0B11CBA1FF83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{993F0327-507B-4422-B5C2-0B11CBA1FF83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{993F0327-507B-4422-B5C2-0B11CBA1FF83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{33C91A02-707E-4261-9F5D-52014E151E45} = {2D837206-5AAE-4D40-B50A-A7EE6A3C7051}
 		{C95CF85F-4735-4D5F-916A-09DAEB743226} = {E035C3E4-1918-412C-90DE-7606C3870B5C}
 		{4780FBB0-92D1-4915-A529-B72D1936755E} = {A8DF2D6A-369C-4576-BCC7-33A9CDDF3C96}
+		{993F0327-507B-4422-B5C2-0B11CBA1FF83} = {E035C3E4-1918-412C-90DE-7606C3870B5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96C69449-0BA8-4046-8EC6-AC6B82693416}

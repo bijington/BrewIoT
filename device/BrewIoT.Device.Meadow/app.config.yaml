@@ -40,3 +40,5 @@ Temperature:
 Job:
   Url: "https://localhost:7466/device"
   #"https://api.brewiot.com/api/Job"
+Device:
+  Id: 1

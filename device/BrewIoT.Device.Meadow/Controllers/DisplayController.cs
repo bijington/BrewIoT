@@ -7,12 +7,7 @@ namespace BrewIoT.Device.Meadow.Controllers;
 
 public class DisplayController : IController
 {
-    DisplayView displayView;
-
-    public DisplayController()
-    {
-        displayView = new ();
-    }
+    private readonly DisplayView displayView = new ();
 
     public void Initialize(IReadOnlyDictionary<string, string> settings)
     {

@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using Meadow.Foundation.Controllers.Pid;
 using Meadow.Hardware;
 using System;
+using BrewIoT.Device.Api;
 using BrewIoT.Device.Meadow.Sensors;
+using BrewIoT.Shared.Models;
 
-namespace BrewIoT.Device.Meadow;
+namespace BrewIoT.Device.Meadow.Controllers;
 
 // Put enough logic into the IoT device to make it safely handle scenarios but not so much that it becomes a monolith.
 // Put the control logic into the next level up.
@@ -21,8 +23,17 @@ public class TemperatureController : IController
     private ITemperatureSensor ambientTemperatureSensor;
     private SoftPwmPort coolingRelayPwm;
     private SoftPwmPort heaterRelayPwm;
-    private StandardPidController pidController;
-    private double powerLevel;
+    private readonly StandardPidController pidController = new()
+    {
+        ProportionalComponent = .15f, // proportional
+        IntegralComponent = .35f, // integral time minutes
+        DerivativeComponent = 0f, // derivative time in minutes
+        OutputMin = -0f, // 0% power minimum
+        OutputMax = 1.0f, // 100% power max
+        OutputTuningInformation = true
+    };
+    private double actualPowerLevel;
+    private int deviceId;
 
     public static double LiquidTemperature { get; private set; } = double.NaN;
 
@@ -32,20 +43,11 @@ public class TemperatureController : IController
 
     public static double TargetTemperature { get; private set; } = double.NaN;
 
-    public TemperatureController()
-    {
-        pidController = new StandardPidController();
-        pidController.ProportionalComponent = .15f; // proportional
-        pidController.IntegralComponent = .35f; // integral time minutes
-        pidController.DerivativeComponent = 0f; // derivative time in minutes
-        pidController.OutputMin = -0f; // 0% power minimum
-        pidController.OutputMax = 1.0f; // 100% power max
-        pidController.OutputTuningInformation = true;
-    }
-
     public void Initialize(IReadOnlyDictionary<string, string> settings)
     {
-        bool.TryParse(settings["Temperature.IsSimulated"], out bool isSimulated);
+        bool.TryParse(settings["Temperature.IsSimulated"], out var isSimulated);
+        
+        int.TryParse(settings["Device.Id"], out this.deviceId);
 
         if (isSimulated)
         {
@@ -110,8 +112,8 @@ public class TemperatureController : IController
             pidController.TargetInput = (float)TargetTemperature;
 
             // get the appropriate power level
-            powerLevel = pidController.CalculateControlOutput();
-            PowerLevel = powerLevel;
+            actualPowerLevel = pidController.CalculateControlOutput();
+            PowerLevel = actualPowerLevel;
         }
 
         // Resolver.Log.Info($"Power level: {powerLevel}");
@@ -130,13 +132,13 @@ public class TemperatureController : IController
 
         if (LiquidTemperature < TargetTemperature)
         {
-            SetRelayPower(heaterRelayPwm, powerLevel);
+            SetRelayPower(heaterRelayPwm, actualPowerLevel);
             SetRelayPower(coolingRelayPwm, 0);
         }
         else if (LiquidTemperature > TargetTemperature)
         {
             SetRelayPower(heaterRelayPwm, 0);
-            SetRelayPower(coolingRelayPwm, Math.Abs(powerLevel));
+            SetRelayPower(coolingRelayPwm, Math.Abs(actualPowerLevel));
         }
         else
         {
@@ -159,14 +161,14 @@ public class TemperatureController : IController
 
     private void ReportReadings()
     {
-        // _ = DeviceApiService.ReportReadings(
-        //     1,
-        //     new Readings
-        //     {
-        //         LiquidTemperature = e.New.Celsius,
-        //         AmbientTemperature = AmbientTemperature,
-        //         InternalAirTemperature = InternalAirTemperature,
-        //         Action = action
-        //     });
+        _ = DeviceApiService.ReportReadings(
+            this.deviceId,
+            new DeviceReading
+            {
+                LiquidTemperature = LiquidTemperature,
+                AmbientTemperature = AmbientTemperature,
+                TargetTemperature = TargetTemperature,
+                Timestamp = DateTime.UtcNow
+            });
     }
 }
