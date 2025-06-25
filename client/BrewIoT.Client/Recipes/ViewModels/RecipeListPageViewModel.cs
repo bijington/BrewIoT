@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using BrewIoT.Client.Recipes.Pages;
+using BrewIoT.Shared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace BrewIoT.Client.Recipes.ViewModels;
 
@@ -33,9 +35,25 @@ public partial class RecipeListPageViewModel : ObservableObject
             NoRecipesMessage = e.Message;
             throw;
         }
-        
+    }
+    
+    [RelayCommand]
+    private async Task OnRecipeSelected(Recipe recipe)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync(
+                nameof(RecipePage),
+                new Dictionary<string, object> { { "Recipe", recipe } });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
+    [RelayCommand]
     private async Task OnAdd()
     {
         await Shell.Current.GoToAsync($"{nameof(RecipePage)}");

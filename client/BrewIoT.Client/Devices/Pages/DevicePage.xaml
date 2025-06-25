@@ -3,35 +3,90 @@
 <ContentPage 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:devices="clr-namespace:BrewIoT.Client.Devices"
     xmlns:viewModels="clr-namespace:BrewIoT.Client.Devices.ViewModels"
+    xmlns:models="clr-namespace:BrewIoT.Shared.Models;assembly=BrewIoT.Shared.Models"
     x:Class="BrewIoT.Client.Devices.Pages.DevicePage"
     x:DataType="viewModels:DevicePageViewModel"
     Title="{Binding Name}">
     
-    <CollectionView 
-        ItemsSource="{Binding Readings}">
+    <ContentPage.Resources>
+        <ColumnDefinitionCollection x:Key="SharedColumnDefinition">
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </ColumnDefinitionCollection>
+    </ContentPage.Resources>
+    
+    <Grid
+        ColumnDefinitions="{StaticResource SharedColumnDefinition}"
+        RowDefinitions="Auto, Auto, Auto, Auto, *"
+        ColumnSpacing="10"
+        RowSpacing="10"
+        Margin="10">
         
-        <CollectionView.EmptyView>
-            <Label 
-                Text="{Binding NoReadingsMessage}" />
-        </CollectionView.EmptyView>
+        <Label Text="Device"/>
         
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="devices:DeviceReading">
-                <Grid ColumnDefinitions="*,*,*">
-                    <Label Text="{Binding AmbientTemperature}" />
+        <Label
+            Text="{Binding Name}"
+            Grid.Column="1"
+            Grid.ColumnSpan="2" />
+        
+        <Label 
+            Text="Last updated"
+            Grid.Row="1" />
+        
+        <Label
+            Text="{Binding LastUpdated}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2" />
+        
+        <Label 
+            Text="Readings" 
+            Grid.ColumnSpan="3"
+            Grid.Row="2"
+            FontSize="16" />
+        
+        <Label 
+            Text="Liquid temperature"
+            Grid.Row="3" />
+        
+        <Label 
+            Text="Target temperature" 
+            Grid.Column="1"
+            Grid.Row="3" />
+        
+        <Label 
+            Text="Timestamp" 
+            Grid.Column="2"
+            Grid.Row="3" />
+        
+        <CollectionView 
+            ItemsSource="{Binding Readings}"
+            Grid.Row="4"
+            Grid.ColumnSpan="3">
+        
+            <CollectionView.EmptyView>
+                <Label 
+                    Text="{Binding NoReadingsMessage}" />
+            </CollectionView.EmptyView>
+        
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:DeviceReading">
+                    <Grid ColumnDefinitions="{StaticResource SharedColumnDefinition}">
+                        <Label Text="{Binding LiquidTemperature}" />
                     
-                    <Label 
-                        Text="{Binding LiquidTemperature}"
-                        Grid.Column="1"/>
+                        <Label 
+                            Text="{Binding TargetTemperature}"
+                            Grid.Column="1"/>
                     
-                    <Label 
-                        Text="{Binding Timestamp}"
-                        Grid.Column="2" />
-                </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                        <Label 
+                            Text="{Binding Timestamp}"
+                            Grid.Column="2" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
     
 </ContentPage>

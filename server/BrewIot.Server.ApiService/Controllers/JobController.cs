@@ -8,12 +8,12 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class JobController : ControllerBase
 {
-    private readonly NpgsqlConnection connection;
+    // private readonly NpgsqlConnection connection;
     private readonly ILogger<JobController> logger;
 
-    public JobController(NpgsqlConnection connection, ILogger<JobController> logger)
+    public JobController(ILogger<JobController> logger)
     {
-        this.connection = connection;
+        // this.connection = connection;
         this.logger = logger;
     }
     

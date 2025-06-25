@@ -20,9 +20,11 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+		
+		const string apiUrl = "https://localhost:7207";
 
-		builder.Services.AddDevices();
-		builder.Services.AddRecipes();
+		builder.Services.AddDevices(apiUrl);
+		builder.Services.AddRecipes(apiUrl);
 
 		return builder.Build();
 	}

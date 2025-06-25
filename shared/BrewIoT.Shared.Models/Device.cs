@@ -35,7 +35,9 @@ namespace BrewIoT.Shared.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public float? TargetTemperature { get; set; }
+        public double? TargetTemperature { get; set; }
+        
+        public TimeSpan Duration { get; set; }
     }
 
 // Job - effectively the recipe

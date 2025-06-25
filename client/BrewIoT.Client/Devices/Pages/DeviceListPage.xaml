@@ -24,10 +24,13 @@
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="devices:Device">
                 <Grid ColumnDefinitions="*,*">
-                    <Label Text="{Binding Name}" />
+                    <Label 
+                        Text="{Binding Name}"
+                        FontSize="16" />
                     
                     <Label 
                         Text="{Binding DeviceType}"
+                        FontSize="16"
                         Grid.Column="1" />
                 </Grid>
             </DataTemplate>

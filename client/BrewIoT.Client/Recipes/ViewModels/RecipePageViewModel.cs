@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using BrewIoT.Client.Devices;
+using BrewIoT.Shared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -13,7 +14,10 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
     private string name = string.Empty;
     
     [ObservableProperty] 
-    private ObservableCollection<RecipeStep> steps = [];
+    private int version;
+    
+    [ObservableProperty] 
+    private ObservableCollection<RecipeStepViewModel> steps = [];
     
     [ObservableProperty] 
     private string noReadingsMessage = "No steps.";
@@ -23,17 +27,22 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
         this.recipeApiService = recipeApiService;
     }
 
-    public async void ApplyQueryAttributes(IDictionary<string, object> query)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         try
         {
             var recipe = (Recipe)query["Recipe"];
             
             Name = recipe.Name;
+            Version = recipe.Version;
             
-            //var deviceReadings = await deviceApiService.GetDeviceReadings(recipe.Id);
-            
-            Steps = new ObservableCollection<RecipeStep>(recipe.Steps);
+            Steps = new ObservableCollection<RecipeStepViewModel>(
+                recipe.Steps.Select(r => new RecipeStepViewModel
+                {
+                    Name = r.Name,
+                    TargetTemperature = r.TargetTemperature,
+                    Duration = r.Duration
+                }));
         }
         catch (Exception e)
         {
@@ -50,7 +59,12 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
             new Recipe
             {
                 Name = Name,
-                Steps = Steps.ToList()
+                Steps = Steps.Select(s => new RecipeStep
+                {
+                    Name = s.Name,
+                    TargetTemperature = s.TargetTemperature,
+                    Duration = s.Duration
+                }).ToList()
             });
     }
 }

@@ -5,15 +5,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:devices="clr-namespace:BrewIoT.Client.Devices.Pages"
     xmlns:recipes="clr-namespace:BrewIoT.Client.Recipes.Pages"
-    Shell.FlyoutBehavior="Flyout"
+    FlyoutBehavior="Disabled"
     Title="BrewIoT.Client">
 
     <TabBar>
-        <Tab Title="Devices">
+        <Tab 
+            Title="Devices"
+            Icon="devices.png">
             <ShellContent ContentTemplate="{DataTemplate devices:DeviceListPage}" />
         </Tab>
     
-        <Tab Title="Recipes">
+        <Tab 
+            Title="Recipes"
+            Icon="recipes.png">
             <ShellContent ContentTemplate="{DataTemplate recipes:RecipeListPage}" />
         </Tab>
     </TabBar>

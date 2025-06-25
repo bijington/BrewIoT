@@ -6,6 +6,7 @@
     x:Class="BrewIoT.Client.Recipes.Pages.RecipeListPage"
     xmlns:recipes="clr-namespace:BrewIoT.Client.Recipes"
     xmlns:viewModels="clr-namespace:BrewIoT.Client.Recipes.ViewModels"
+    xmlns:models="clr-namespace:BrewIoT.Shared.Models;assembly=BrewIoT.Shared.Models"
     x:DataType="viewModels:RecipeListPageViewModel"
     Title="Recipes">
     
@@ -14,7 +15,11 @@
     </ContentPage.ToolbarItems>
     
     <CollectionView 
-        ItemsSource="{Binding Recipes}">
+        ItemsSource="{Binding Recipes}"
+        SelectionMode="Single"
+        x:Name="RecipesCollection"
+        SelectionChangedCommand="{Binding RecipeSelectedCommand}"
+        SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={x:Reference RecipesCollection}, x:DataType=CollectionView}">
         
         <CollectionView.EmptyView>
             <Label 
@@ -22,16 +27,20 @@
         </CollectionView.EmptyView>
         
         <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="recipes:Recipe">
+            <DataTemplate x:DataType="models:Recipe">
                 <Grid ColumnDefinitions="*,*,*">
-                    <Label Text="{Binding Name}" />
+                    <Label
+                        Text="{Binding Name}"
+                        FontSize="16" />
                     
                     <Label 
                         Text="{Binding Version}"
+                        FontSize="16"
                         Grid.Column="1" />
                     
                     <Label 
                         Text="{Binding Steps.Count}"
+                        FontSize="16"
                         Grid.Column="2" />
                 </Grid>
             </DataTemplate>

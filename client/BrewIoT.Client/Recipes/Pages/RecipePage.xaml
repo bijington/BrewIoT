@@ -3,15 +3,96 @@
 <ContentPage 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:recipes="clr-namespace:BrewIoT.Client.Recipes"
     xmlns:viewModels="clr-namespace:BrewIoT.Client.Recipes.ViewModels"
     x:Class="BrewIoT.Client.Recipes.Pages.RecipePage"
-    Shell.PresentationMode="ModalAnimated"
     x:DataType="viewModels:RecipePageViewModel"
     Title="{Binding Name}">
     
     <ContentPage.ToolbarItems>  
         <ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
     </ContentPage.ToolbarItems>
+    
+    <ContentPage.Resources>
+        <ColumnDefinitionCollection x:Key="SharedColumnDefinition">
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </ColumnDefinitionCollection>
+    </ContentPage.Resources>
+    
+    <Grid
+        ColumnDefinitions="{StaticResource SharedColumnDefinition}"
+        RowDefinitions="Auto, Auto, Auto, Auto, *"
+        ColumnSpacing="10"
+        RowSpacing="10"
+        Margin="10">
+        
+        <Label Text="Recipe"/>
+        
+        <Label
+            Text="{Binding Name}"
+            Grid.Column="1"
+            Grid.ColumnSpan="2" />
+        
+        <Label 
+            Text="Version"
+            Grid.Row="1" />
+        
+        <Label
+            Text="{Binding Version}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2" />
+        
+        <Label 
+            Text="Steps" 
+            Grid.ColumnSpan="3"
+            Grid.Row="2"
+            FontSize="16" />
+        
+        <Label 
+            Text="Name"
+            Grid.Row="3" />
+        
+        <Label 
+            Text="Target temperature" 
+            Grid.Column="1"
+            Grid.Row="3" />
+        
+        <Label 
+            Text="Duration" 
+            Grid.Column="2"
+            Grid.Row="3" />
+        
+        <CollectionView 
+            ItemsSource="{Binding Steps}"
+            Grid.Row="4"
+            Grid.ColumnSpan="3">
+        
+            <CollectionView.EmptyView>
+                <Label 
+                    Text="{Binding NoReadingsMessage}" />
+            </CollectionView.EmptyView>
+        
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:RecipeStepViewModel">
+                    <Grid ColumnDefinitions="{StaticResource SharedColumnDefinition}">
+                        <Entry 
+                            Text="{Binding Name}" />
+                    
+                        <Entry 
+                            Text="{Binding TargetTemperature}"
+                            HorizontalTextAlignment="End"
+                            Grid.Column="1"/>
+                    
+                        <Entry
+                            Text="{Binding Duration}"
+                            HorizontalTextAlignment="End"
+                            Grid.Column="2" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
     
 </ContentPage>

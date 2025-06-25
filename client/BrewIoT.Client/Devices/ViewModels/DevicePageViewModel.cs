@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using BrewIoT.Shared.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BrewIoT.Client.Devices.ViewModels;
@@ -7,8 +8,11 @@ public partial class DevicePageViewModel : ObservableObject, IQueryAttributable
 {
     private readonly IDeviceApiService deviceApiService;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private string name = string.Empty;
+    
+    [ObservableProperty]
+    private DateTime lastUpdated = DateTime.MinValue;
     
     [ObservableProperty] 
     private ObservableCollection<DeviceReading> readings = [];
@@ -31,7 +35,9 @@ public partial class DevicePageViewModel : ObservableObject, IQueryAttributable
             
             var deviceReadings = await deviceApiService.GetDeviceReadings(device.Id);
             
-            Readings = new ObservableCollection<DeviceReading>(deviceReadings);
+            Readings = new ObservableCollection<DeviceReading>(deviceReadings.OrderByDescending(x => x.Timestamp));
+            
+            LastUpdated = deviceReadings.LastOrDefault()?.Timestamp ?? DateTime.MinValue;
         }
         catch (Exception e)
         {

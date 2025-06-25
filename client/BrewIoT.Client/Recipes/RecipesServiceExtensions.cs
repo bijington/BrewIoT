@@ -6,10 +6,10 @@ namespace BrewIoT.Client.Recipes;
 
 public static class RecipesServiceExtensions
 {
-    public static IServiceCollection AddRecipes(this IServiceCollection services)
+    public static IServiceCollection AddRecipes(this IServiceCollection services, string apiUrl)
     {
         services.AddRefitClient<IRecipeApiService>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7466"));
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiUrl));
         
         Routing.RegisterRoute(nameof(RecipePage), typeof(RecipePage));
         

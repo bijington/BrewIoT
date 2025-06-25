@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BrewIoT.Client.Recipes.ViewModels;
 
 namespace BrewIoT.Client.Recipes.Pages;
 
 public partial class RecipePage : ContentPage
 {
-    public RecipePage()
+    public RecipePage(RecipePageViewModel viewModel)
     {
         InitializeComponent();
+        BindingContext = viewModel;
     }
 }

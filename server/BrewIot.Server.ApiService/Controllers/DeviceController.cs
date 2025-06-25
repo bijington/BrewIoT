@@ -9,12 +9,12 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class DeviceController : ControllerBase
 {
-    private readonly NpgsqlConnection connection;
+    //private readonly NpgsqlConnection connection;
     private readonly ILogger<DeviceController> logger;
 
-    public DeviceController(NpgsqlConnection connection, ILogger<DeviceController> logger)
+    public DeviceController(ILogger<DeviceController> logger)
     {
-        this.connection = connection;
+        //this.connection = connection;
         this.logger = logger;
     }
     
@@ -24,15 +24,15 @@ public class DeviceController : ControllerBase
         {
             [1] = 
             [
-                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 15, Timestamp = DateTime.Now },
-                new DeviceReading { AmbientTemperature = 19.1, LiquidTemperature = 16, Timestamp = DateTime.Now },
-                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 17, Timestamp = DateTime.Now },
-                new DeviceReading { AmbientTemperature = 19, LiquidTemperature = 18, Timestamp = DateTime.Now }
+                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 15, Timestamp = DateTime.Now },
+                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 16, Timestamp = DateTime.Now.AddMinutes(1) },
+                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 17, Timestamp = DateTime.Now.AddMinutes(2) },
+                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 18, Timestamp = DateTime.Now.AddMinutes(3) }
             ]
         };
     
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<ActionResult<IEnumerable<Device>>> Get()
     {
         return Ok(devices);
     }

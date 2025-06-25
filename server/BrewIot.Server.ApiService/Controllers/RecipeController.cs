@@ -9,32 +9,59 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class RecipeController : ControllerBase
 {
-    private readonly NpgsqlConnection connection;
+    // private readonly NpgsqlConnection connection;
     private readonly ILogger<RecipeController> logger;
 
-    public RecipeController(NpgsqlConnection connection, ILogger<RecipeController> logger)
+    public RecipeController(ILogger<RecipeController> logger)
     {
-        this.connection = connection;
+        // this.connection = connection;
         this.logger = logger;
     }
     
     [HttpGet]
-    public async Task<IEnumerable<Recipe>> Get()
+    public async Task<ActionResult<IEnumerable<Recipe>>> Get()
     {
         try
         {
+            var recipe = new Recipe
+            {
+                Name = "IPA",
+                Version = 14,
+                Steps = 
+                [
+                    new RecipeStep
+                    {
+                        Name = "Fermentation",
+                        TargetTemperature = 18,
+                        Duration = new TimeSpan(14, 0, 2, 0)
+                    },
+                    new RecipeStep
+                    {
+                        Name = "Carbonation",
+                        TargetTemperature = 20,
+                        Duration = new TimeSpan(14, 2, 0, 0)
+                    },
+                    new RecipeStep
+                    {
+                        Name = "Cold crash",
+                        TargetTemperature = 2,
+                        Duration = new TimeSpan(7, 0, 0, 0)
+                    }
+                ]
+            };
+            
             const string sql =
                 """
                     SELECT Id, Name, Version
                     FROM Recipe
                 """;
 
-            return await connection.QueryAsync<Recipe>(sql);
+            return Ok(new List<Recipe> { recipe }); //await connection.QueryAsync<Recipe>(sql);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, ex.Message);
-            return Enumerable.Empty<Recipe>();
+            return BadRequest(Enumerable.Empty<Recipe>());
         }
     }
 

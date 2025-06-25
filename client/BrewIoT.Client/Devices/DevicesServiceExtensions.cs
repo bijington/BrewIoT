@@ -6,10 +6,10 @@ namespace BrewIoT.Client.Devices;
 
 public static class DevicesServiceExtensions
 {
-    public static IServiceCollection AddDevices(this IServiceCollection services)
+    public static IServiceCollection AddDevices(this IServiceCollection services, string apiUrl)
     {
         services.AddRefitClient<IDeviceApiService>()
-            .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7207"));
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiUrl));
         
         Routing.RegisterRoute(nameof(DevicePage), typeof(DevicePage));
         
