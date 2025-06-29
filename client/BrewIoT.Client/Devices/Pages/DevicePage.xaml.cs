@@ -14,4 +14,11 @@ public partial class DevicePage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
+    {
+        base.OnNavigatingFrom(args);
+        
+        ((DevicePageViewModel)BindingContext).OnNavigatingFrom();
+    }
 }
