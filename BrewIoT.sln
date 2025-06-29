@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{A8DF2D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrewIoT.Shared.Models", "shared\BrewIoT.Shared.Models\BrewIoT.Shared.Models.csproj", "{4780FBB0-92D1-4915-A529-B72D1936755E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrewIoT.Device.Api", "BrewIoT.Device.Api\BrewIoT.Device.Api.csproj", "{993F0327-507B-4422-B5C2-0B11CBA1FF83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrewIoT.Device.Api", "device\BrewIoT.Device.Api\BrewIoT.Device.Api.csproj", "{993F0327-507B-4422-B5C2-0B11CBA1FF83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

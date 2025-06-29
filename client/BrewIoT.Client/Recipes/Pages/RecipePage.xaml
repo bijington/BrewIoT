@@ -17,6 +17,7 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </ColumnDefinitionCollection>
     </ContentPage.Resources>
     
@@ -60,8 +61,14 @@
             Grid.Row="3" />
         
         <Label 
-            Text="Duration" 
+            Text="Duration (hours)" 
             Grid.Column="2"
+            Grid.Row="3" />
+        
+        <Button 
+            Text="Add" 
+            Command="{Binding AddStepCommand}"
+            Grid.Column="3"
             Grid.Row="3" />
         
         <CollectionView 
@@ -71,7 +78,7 @@
         
             <CollectionView.EmptyView>
                 <Label 
-                    Text="{Binding NoReadingsMessage}" />
+                    Text="{Binding NoStepsMessage}" />
             </CollectionView.EmptyView>
         
             <CollectionView.ItemTemplate>
@@ -89,6 +96,12 @@
                             Text="{Binding Duration}"
                             HorizontalTextAlignment="End"
                             Grid.Column="2" />
+                        
+                        <Button 
+                            Text="X" 
+                            Command="{Binding RemoveStepCommand, Source={RelativeSource AncestorType={x:Type viewModels:RecipePageViewModel}}}"
+                            CommandParameter="{Binding}"
+                            Grid.Column="3" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

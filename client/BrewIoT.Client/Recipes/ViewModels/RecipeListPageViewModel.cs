@@ -56,6 +56,16 @@ public partial class RecipeListPageViewModel : ObservableObject
     [RelayCommand]
     private async Task OnAdd()
     {
-        await Shell.Current.GoToAsync($"{nameof(RecipePage)}");
+        try
+        {
+            await Shell.Current.GoToAsync(
+                nameof(RecipePage),
+                new Dictionary<string, object> { { "Recipe", new Recipe() } });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

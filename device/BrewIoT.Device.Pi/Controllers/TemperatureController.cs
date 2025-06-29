@@ -21,7 +21,7 @@ public class TemperatureController : IController
         Console.WriteLine($"Wire: {resistanceTemperatureDetectorWires}");
         
         using SpiDevice device = SpiDevice.Create(settings);
-        using Max31865 sensor = new(device, PlatinumResistanceThermometerType.Pt100, resistanceTemperatureDetectorWires, ElectricResistance.FromOhms(430));
+        //using Max31865 sensor = new(device, PlatinumResistanceThermometerType.Pt100, resistanceTemperatureDetectorWires, ElectricResistance.FromOhms(430), ConversionFilterMode);
         
         //return sensor.Temperature.DegreesCelsius;
     }

@@ -20,7 +20,7 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
     private ObservableCollection<RecipeStepViewModel> steps = [];
     
     [ObservableProperty] 
-    private string noReadingsMessage = "No steps.";
+    private string noStepsMessage = "No steps.";
 
     public RecipePageViewModel(IRecipeApiService recipeApiService)
     {
@@ -41,15 +41,27 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
                 {
                     Name = r.Name,
                     TargetTemperature = r.TargetTemperature,
-                    Duration = r.Duration
+                    Duration = r.Duration.TotalHours
                 }));
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            NoReadingsMessage = e.Message;
+            NoStepsMessage = e.Message;
             throw;
         }
+    }
+
+    [RelayCommand]
+    private void OnAddStep()
+    {
+        Steps.Add(new RecipeStepViewModel());
+    }
+    
+    [RelayCommand]
+    private void OnRemoveStep(RecipeStepViewModel step)
+    {
+        Steps.Remove(step);
     }
 
     [RelayCommand]
@@ -63,7 +75,7 @@ public partial class RecipePageViewModel : ObservableObject, IQueryAttributable
                 {
                     Name = s.Name,
                     TargetTemperature = s.TargetTemperature,
-                    Duration = s.Duration
+                    Duration = TimeSpan.FromHours(s.Duration)
                 }).ToList()
             });
     }

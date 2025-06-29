@@ -11,5 +11,5 @@ public partial class RecipeStepViewModel : ObservableObject
     private double? targetTemperature;
     
     [ObservableProperty]
-    private TimeSpan duration;
+    private double duration;
 }
