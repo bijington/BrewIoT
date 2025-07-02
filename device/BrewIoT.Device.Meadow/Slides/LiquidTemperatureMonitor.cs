@@ -1,5 +1,5 @@
+using System.Threading.Tasks;
 using BrewIoT.Device.Meadow.Sensors;
-using Meadow;
 
 namespace BrewIoT.Device.Meadow.Slides;
 
@@ -16,14 +16,12 @@ public class LiquidTemperatureMonitor
             MeadowApp.Device.CreateDigitalOutputPort(MeadowApp.Device.Pins.D03),
             Max31865TemperatureSensor.KnownSensorType.PT100
         );
-
-        Resolver.SensorService.RegisterSensor(liquidTemperatureSensor);
-
-        liquidTemperatureSensor.StartUpdating();
     }
 
-    public void Read()
+    public async Task Read()
     {
-        LiquidTemperature = liquidTemperatureSensor.Temperature?.Celsius ?? double.NaN;
+        var temperature = await liquidTemperatureSensor.Read();
+
+        LiquidTemperature = temperature.Celsius;
     }
 }

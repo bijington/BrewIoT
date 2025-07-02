@@ -14,10 +14,7 @@ public class MeadowApp : App<F7FeatherV2>
         new JobController(),
         new TemperatureController(),
         new DisplayController()
-        //new Pt100Controller()
     ];
-
-    //new Pt100Controller()
 
     public override Task Initialize()
     {

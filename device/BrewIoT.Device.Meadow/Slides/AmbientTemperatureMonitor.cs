@@ -1,4 +1,4 @@
-using Meadow;
+using System.Threading.Tasks;
 using Meadow.Foundation.Sensors.Temperature;
 using Meadow.Peripherals.Sensors;
 
@@ -16,14 +16,12 @@ public class AmbientTemperatureMonitor
             analogPin: MeadowApp.Device.Pins.A01,
             sensorType: AnalogTemperature.KnownSensorType.LM35
         );
-
-        Resolver.SensorService.RegisterSensor(ambientTemperatureSensor);
-
-        ambientTemperatureSensor.StartUpdating();
     }
 
-    public void Read()
+    public async Task Read()
     {
-        AmbientTemperature = ambientTemperatureSensor.Temperature?.Celsius ?? double.NaN;
+        var temperature = await ambientTemperatureSensor.Read();
+
+        AmbientTemperature = temperature.Celsius;
     }
 }
