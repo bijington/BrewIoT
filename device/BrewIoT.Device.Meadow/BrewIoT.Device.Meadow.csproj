@@ -8,9 +8,9 @@
     </PropertyGroup>
     <ItemGroup>
         <!-- <PackageReference Include="System.Text.Json" Version="*" /> -->
-        <PackageReference Include="Meadow.F7" Version="2.1.0.1" />
-        <PackageReference Include="Meadow.Foundation" Version="2.1.0.1" />
-        <PackageReference Include="Meadow.Foundation.Displays.Lcd.CharacterDisplay" Version="2.1.0.1" />
+        <PackageReference Include="Meadow.F7" Version="2.3.0" />
+        <PackageReference Include="Meadow.Foundation" Version="2.3.0" />
+        <PackageReference Include="Meadow.Foundation.Displays.Lcd.CharacterDisplay" Version="2.3.0" />
     </ItemGroup>
     <ItemGroup>
         <None Include="meadow.config.yaml">
@@ -24,6 +24,6 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\BrewIoT.Device.Api\BrewIoT.Device.Api.csproj" />
+      <ProjectReference Include="..\BrewIoT.Device.Api\BrewIoT.Device.Api.csproj" />
     </ItemGroup>
 </Project>

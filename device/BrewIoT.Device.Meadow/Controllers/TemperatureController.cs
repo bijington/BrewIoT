@@ -85,9 +85,6 @@ public class TemperatureController : IController
         Resolver.SensorService.RegisterSensor(ambientTemperatureSensor);
         Resolver.SensorService.RegisterSensor(liquidTemperatureSensor);
 
-        ambientTemperatureSensor.StartUpdating();
-        liquidTemperatureSensor.StartUpdating();
-
         // Initialize in off state.
         heaterRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D15, 1, 0.2f);
         coolingRelayPwm = new SoftPwmPort(MeadowApp.Device.Pins.D14, 1, 0.2f);
@@ -96,10 +93,10 @@ public class TemperatureController : IController
         coolingRelayPwm.Inverted = true;
     }
 
-    public Task Read()
+    public async Task Read()
     {
-        AmbientTemperature = ambientTemperatureSensor.Temperature?.Celsius ?? double.NaN;
-        LiquidTemperature = liquidTemperatureSensor.Temperature?.Celsius ?? double.NaN;
+        AmbientTemperature = (await ambientTemperatureSensor.Read()).Celsius;
+        LiquidTemperature = (await liquidTemperatureSensor.Read()).Celsius;
 
         var currentJobStage = JobController.CurrentJobStage;
         TargetTemperature = currentJobStage.TargetTemperature;
@@ -117,17 +114,10 @@ public class TemperatureController : IController
         }
 
         // Resolver.Log.Info($"Power level: {powerLevel}");
-
-        return Task.CompletedTask;
     }
 
     public void Write()
     {
-        if (liquidTemperatureSensor.Temperature is null)
-        {
-            return;
-        }
-
         ReportReadings();
 
         if (LiquidTemperature < TargetTemperature)
