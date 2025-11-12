@@ -24,7 +24,7 @@ public class RecipeController : ControllerBase
         try
         {
             var recipes = await this.context.Recipes
-                .Include(r => r.Steps.OrderBy(s => s.Order))
+                .Include(r => r.Steps)
                 .ToListAsync();
             
             return Ok(recipes.Select(r => new Recipe
@@ -55,7 +55,7 @@ public class RecipeController : ControllerBase
         try
         {
             var recipe = await this.context.Recipes
-                .Include(r => r.Steps.OrderBy(s => s.Order))
+                .Include(r => r.Steps)
                 .FirstOrDefaultAsync(r => r.Id == id);
             
             if (recipe == null)
