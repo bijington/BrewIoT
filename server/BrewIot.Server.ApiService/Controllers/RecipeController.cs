@@ -23,30 +23,37 @@ public class RecipeController : ControllerBase
     {
         try
         {
-            try
-            {
-                return Ok(await this.context.Recipes.ToListAsync());
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e.Message);
-            
-                return StatusCode(500);
-            }
+            return Ok(await this.context.Recipes.ToListAsync());
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            logger.LogError(ex, ex.Message);
-            return BadRequest(Enumerable.Empty<Recipe>());
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
         }
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Recipe recipe)
     {
-        //connection.
-        //recipes.Add(recipe);
-        
-        return Ok(recipe);
+        try
+        {
+            var newRecipe = new Data.Models.Recipe
+            {
+                Name = recipe.Name,
+                Version = recipe.Version
+            };
+            
+            context.Recipes.Add(newRecipe);
+            await context.SaveChangesAsync();
+            
+            return Ok(recipe);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
     }
 }
