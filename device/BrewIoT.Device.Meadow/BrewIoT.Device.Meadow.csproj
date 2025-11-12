@@ -23,7 +23,7 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-    <ItemGroup>
+    <!-- <ItemGroup>
       <ProjectReference Include="..\BrewIoT.Device.Api\BrewIoT.Device.Api.csproj" />
-    </ItemGroup>
+    </ItemGroup> -->
 </Project>

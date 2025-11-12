@@ -9,12 +9,17 @@ namespace BrewIoT.Device.Meadow;
 
 public class MeadowApp : App<F7FeatherV2>
 {
-    readonly IReadOnlyList<IController> controllers =
-    [
-        new JobController(),
-        new TemperatureController(),
-        new DisplayController()
-    ];
+    readonly IReadOnlyList<IController> controllers;
+
+    public MeadowApp()
+    {
+        controllers =
+        [
+            new JobController(),
+            new TemperatureController(),
+            new DisplayController()
+        ];
+    }
 
     public override Task Initialize()
     {
