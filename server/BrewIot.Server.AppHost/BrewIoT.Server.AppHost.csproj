@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BrewIoT.Server.ApiService\BrewIoT.Server.ApiService.csproj" />
-    <ProjectReference Include="..\BrewIoT.Server.Web\BrewIoT.Server.Web.csproj" />
+    <ProjectReference Include="..\BrewIot.Server.ApiService\BrewIoT.Server.ApiService.csproj" />
+    <ProjectReference Include="..\BrewIot.Server.Web\BrewIoT.Server.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
