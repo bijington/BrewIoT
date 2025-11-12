@@ -1,7 +1,7 @@
-using Dapper;
+using BrewIoT.Server.Data.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using BrewIoT.Shared.Models;
-using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -9,13 +9,13 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class RecipeController : ControllerBase
 {
-    // private readonly NpgsqlConnection connection;
     private readonly ILogger<RecipeController> logger;
+    private readonly BrewContext context;
 
-    public RecipeController(ILogger<RecipeController> logger)
+    public RecipeController(ILogger<RecipeController> logger, BrewContext context)
     {
-        // this.connection = connection;
         this.logger = logger;
+        this.context = context;
     }
     
     [HttpGet]
@@ -23,40 +23,16 @@ public class RecipeController : ControllerBase
     {
         try
         {
-            var recipe = new Recipe
+            try
             {
-                Name = "IPA",
-                Version = 14,
-                Steps = 
-                [
-                    new RecipeStep
-                    {
-                        Name = "Fermentation",
-                        TargetTemperature = 18,
-                        Duration = new TimeSpan(14, 0, 2, 0)
-                    },
-                    new RecipeStep
-                    {
-                        Name = "Carbonation",
-                        TargetTemperature = 20,
-                        Duration = new TimeSpan(14, 2, 0, 0)
-                    },
-                    new RecipeStep
-                    {
-                        Name = "Cold crash",
-                        TargetTemperature = 2,
-                        Duration = new TimeSpan(7, 0, 0, 0)
-                    }
-                ]
-            };
+                return Ok(await this.context.Recipes.ToListAsync());
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.Message);
             
-            const string sql =
-                """
-                    SELECT Id, Name, Version
-                    FROM Recipe
-                """;
-
-            return Ok(new List<Recipe> { recipe }); //await connection.QueryAsync<Recipe>(sql);
+                return StatusCode(500);
+            }
         }
         catch (Exception ex)
         {

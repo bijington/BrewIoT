@@ -12,11 +12,11 @@ namespace BrewIoT.Server.Web.Pages.Devices
             _deviceApiClient = deviceApiClient;
         }
 
-        public DeviceReading Reading { get;set; } = default!;
+        public IList<Device> Devices { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Reading = await _deviceApiClient.GetLatestReadingAsync(1) ?? new DeviceReading();
+            Devices = await _deviceApiClient.GetDevicesAsync();
         }
     }
 }

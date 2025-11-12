@@ -1,6 +1,7 @@
+using BrewIoT.Server.Data.Contexts;
 using BrewIoT.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -8,13 +9,13 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class JobController : ControllerBase
 {
-    // private readonly NpgsqlConnection connection;
     private readonly ILogger<JobController> logger;
+    private readonly BrewContext context;
 
-    public JobController(ILogger<JobController> logger)
+    public JobController(ILogger<JobController> logger, BrewContext context)
     {
-        // this.connection = connection;
         this.logger = logger;
+        this.context = context;
     }
     
     static readonly List<Job> jobs = [new Job { Id = 1, Device = new Device { Id = 3 }, Recipe = new Recipe { Id = 2, Name = "Test" } }];
@@ -22,22 +23,35 @@ public class JobController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        return Ok(jobs);
+        try
+        {
+            return Ok(await this.context.Jobs.ToListAsync());
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
     }
     
     [HttpGet("stage/{deviceId}")]
     public async Task<IActionResult> GetStage(int deviceId)
     {
-        return Ok(new JobStage
+        try
         {
-            StartTime = DateTime.Now,
-            Status = JobStageStatus.Pending,
-            RecipeStep = new RecipeStep
-            {
-                Id = 1,
-                Name = "Fermentation"
-            }
-        });
+            var currentStage = 
+                await this.context.JobStages
+                    .FirstOrDefaultAsync(stage => stage.Job.DeviceId == deviceId && stage.Status == Data.Models.JobStageStatus.InProgress);
+            
+            return Ok(currentStage);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
     }
 
     [HttpPost]

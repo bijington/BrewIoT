@@ -8,14 +8,15 @@
 
   <ItemGroup>
 <!--    <PackageReference Include="Aspire.Microsoft.Data.SqlClient" Version="9.2.0" />-->
-    <PackageReference Include="Aspire.Npgsql" Version="9.2.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+      <PackageReference Include="CommunityToolkit.Aspire.Microsoft.EntityFrameworkCore.Sqlite" Version="9.7.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\BrewIoT.Shared.Models\BrewIoT.Shared.Models.csproj" />
+    <ProjectReference Include="..\BrewIoT.Server.Data\BrewIoT.Server.Data.csproj" />
     <ProjectReference Include="..\BrewIoT.Server.ServiceDefaults\BrewIoT.Server.ServiceDefaults.csproj" />
   </ItemGroup>
 

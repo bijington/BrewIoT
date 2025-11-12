@@ -1,7 +1,8 @@
 using System.Collections.Concurrent;
+using BrewIoT.Server.Data.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using BrewIoT.Shared.Models;
-using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrewIoT.Server.ApiService.Controllers;
 
@@ -9,70 +10,112 @@ namespace BrewIoT.Server.ApiService.Controllers;
 [ApiController]
 public class DeviceController : ControllerBase
 {
-    //private readonly NpgsqlConnection connection;
     private readonly ILogger<DeviceController> logger;
+    private readonly BrewContext context;
 
-    public DeviceController(ILogger<DeviceController> logger)
+    public DeviceController(ILogger<DeviceController> logger, BrewContext context)
     {
-        //this.connection = connection;
         this.logger = logger;
+        this.context = context;
     }
-    
-    public static List<Device> devices = [new Device { Id = 1, Name = "Cooler box", DeviceType = DeviceType.Meadow }];
-    public static ConcurrentDictionary<int, IList<DeviceReading>> deviceReadings = 
-        new ConcurrentDictionary<int, IList<DeviceReading>>
-        {
-            [1] = 
-            [
-                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 15, Timestamp = DateTime.Now },
-                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 16, Timestamp = DateTime.Now.AddMinutes(1) },
-                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 17, Timestamp = DateTime.Now.AddMinutes(2) },
-                new DeviceReading { TargetTemperature = 19, LiquidTemperature = 18, Timestamp = DateTime.Now.AddMinutes(3) }
-            ]
-        };
     
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Device>>> Get()
     {
-        return Ok(devices);
+        try
+        {
+            return Ok(await this.context.Devices.ToListAsync());
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
     }
     
     [HttpGet("readings/{deviceId}")]
     public async Task<IActionResult> GetReadings(int deviceId)
     {
-        var readings = deviceReadings[deviceId];
-        return Ok(readings);
+        try
+        {
+            return Ok(await this.context.DeviceReadings.Where(d => d.DeviceId == deviceId).ToListAsync());
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return  StatusCode(500);
+        }
     }
     
     [HttpGet("latest-reading/{deviceId}")]
     public async Task<IActionResult> GetLatestReading(int deviceId)
     {
-        var reading = deviceReadings.GetValueOrDefault(deviceId);
-        
-        return Ok(reading?.FirstOrDefault());
+        try
+        {
+            var latestReading = 
+                await this.context.DeviceReadings
+                    .OrderByDescending(d => d.Timestamp)
+                    .FirstOrDefaultAsync(d => d.DeviceId == deviceId);
+            
+            return Ok(latestReading);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return  StatusCode(500);
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Device device)
+    public async Task<IActionResult> Create([FromBody] Device device)
     {
-        devices.Add(device);
-        
-        return Ok(device);
+        try
+        {
+            var newDevice = new Data.Models.Device
+            {
+                Name = device.Name
+            };
+            
+            context.Devices.Add(newDevice);
+            await context.SaveChangesAsync();
+            
+            return Ok(device);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return  StatusCode(500);
+        }
     }
     
     [HttpPost("reading/{deviceId}")]
     public async Task<IActionResult> Post(int deviceId, [FromBody] DeviceReading deviceReading)
     {
-        deviceReadings.AddOrUpdate(
-            deviceId,
-            [deviceReading],
-            (k, v) =>
+        try
+        {
+            var reading = new Data.Models.DeviceReading
             {
-                v.Add(deviceReading);
-                
-                return v;
-            });
-        
-        return Ok(deviceReading);
+                DeviceId = deviceId,
+                Timestamp = deviceReading.Timestamp,
+                TargetTemperature = deviceReading.TargetTemperature,
+                LiquidTemperature = deviceReading.LiquidTemperature,
+                AmbientTemperature = deviceReading.AmbientTemperature
+            };
+
+            context.DeviceReadings.Add(reading);
+            await context.SaveChangesAsync();
+            
+            return Ok(deviceReading);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return  StatusCode(500);
+        }
     }
 }
