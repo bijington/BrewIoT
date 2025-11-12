@@ -12,4 +12,7 @@ public partial class RecipeStepViewModel : ObservableObject
     
     [ObservableProperty]
     private double duration;
+    
+    [ObservableProperty]
+    private int order;
 }

@@ -38,6 +38,8 @@ namespace BrewIoT.Shared.Models
         public double? TargetTemperature { get; set; }
         
         public TimeSpan Duration { get; set; }
+        
+        public int Order { get; set; }
     }
 
 // Job - effectively the recipe

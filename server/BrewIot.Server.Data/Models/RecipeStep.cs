@@ -8,4 +8,12 @@ public class RecipeStep
 
     [Required]
     public string Name { get; set; } = string.Empty;
+    
+    public double? TargetTemperature { get; set; }
+    
+    public TimeSpan Duration { get; set; }
+    
+    public int Order { get; set; }
+    
+    public int RecipeId { get; set; }
 }

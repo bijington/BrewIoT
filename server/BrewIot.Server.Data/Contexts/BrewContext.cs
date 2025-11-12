@@ -16,4 +16,16 @@ public class BrewContext(DbContextOptions options) : DbContext(options)
     public DbSet<Recipe> Recipes => Set<Recipe>();
     
     public DbSet<RecipeStep> RecipeSteps => Set<RecipeStep>();
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        
+        // Configure Recipe-RecipeStep relationship
+        modelBuilder.Entity<Recipe>()
+            .HasMany(r => r.Steps)
+            .WithOne()
+            .HasForeignKey(s => s.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }
