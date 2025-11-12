@@ -18,8 +18,6 @@ public class JobController : ControllerBase
         this.context = context;
     }
     
-    static readonly List<Job> jobs = [new Job { Id = 1, Device = new Device { Id = 3 }, Recipe = new Recipe { Id = 2, Name = "Test" } }];
-    
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -57,13 +55,31 @@ public class JobController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Job job)
     {
-        if (jobs.Any(x => x.Id != job.Id && x.Device.Id == job.Device.Id))
+        try
         {
-            return BadRequest();
+            var existingJob = await this.context.Jobs
+                .FirstOrDefaultAsync(x => x.DeviceId == job.Device.Id);
+            
+            if (existingJob != null)
+            {
+                return BadRequest();
+            }
+            
+            var newJob = new Data.Models.Job
+            {
+                DeviceId = job.Device.Id
+            };
+            
+            context.Jobs.Add(newJob);
+            await context.SaveChangesAsync();
+            
+            return Ok(job);
         }
-        
-        jobs.Add(job);
-        
-        return Ok(job);
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
     }
 }

@@ -2,6 +2,8 @@ namespace BrewIoT.Server.Data.Models;
 
 public class DeviceReading
 {
+    public int Id { get; set; }
+    
     public double LiquidTemperature { get; set; }
 
     public double AmbientTemperature { get; set; }

@@ -8,5 +8,7 @@ public sealed class Job
     
     public Device Device { get; set; }
 
+    public int RecipeId { get; set; }
+    
     public Recipe Recipe { get; set; }
 }

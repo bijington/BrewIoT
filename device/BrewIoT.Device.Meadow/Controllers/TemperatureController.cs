@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Meadow.Foundation.Controllers.Pid;
 using Meadow.Hardware;
 using System;
-using BrewIoT.Device.Api;
+//using BrewIoT.Device.Api;
 using BrewIoT.Device.Meadow.Sensors;
-using BrewIoT.Shared.Models;
+//using BrewIoT.Shared.Models;
 
 namespace BrewIoT.Device.Meadow.Controllers;
 
@@ -28,7 +28,7 @@ public class TemperatureController : IController
         ProportionalComponent = .15f, // proportional
         IntegralComponent = .35f, // integral time minutes
         DerivativeComponent = 0f, // derivative time in minutes
-        OutputMin = -0f, // 0% power minimum
+        OutputMin = -1.0f, // 0% power minimum
         OutputMax = 1.0f, // 100% power max
         OutputTuningInformation = true
     };
@@ -151,14 +151,14 @@ public class TemperatureController : IController
 
     private void ReportReadings()
     {
-        _ = DeviceApiService.ReportReadings(
-            this.deviceId,
-            new DeviceReading
-            {
-                LiquidTemperature = LiquidTemperature,
-                AmbientTemperature = AmbientTemperature,
-                TargetTemperature = TargetTemperature,
-                Timestamp = DateTime.UtcNow
-            });
+        // _ = DeviceApiService.ReportReadings(
+        //     this.deviceId,
+        //     new DeviceReading
+        //     {
+        //         LiquidTemperature = LiquidTemperature,
+        //         AmbientTemperature = AmbientTemperature,
+        //         TargetTemperature = TargetTemperature,
+        //         Timestamp = DateTime.UtcNow
+        //     });
     }
 }

@@ -52,7 +52,7 @@ namespace BrewIoT.Device.Api
                 client.Timeout = new TimeSpan(0, 5, 0);
 
                 var json = System.Text.Json.JsonSerializer.Serialize(reading);
-                var stringContent = new StringContent(json, Encoding.UTF8, "application/json"); // use MediaTypeNames.Application.Json in Core 3.0+ and Standard 2.1+
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await client.PostAsync($"{apiUri}/readings/{deviceId}", stringContent);
 
