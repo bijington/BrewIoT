@@ -29,6 +29,30 @@ public class DeviceApiClient(HttpClient httpClient)
 
         return devices.ToArray();
     }
+    
+    public async Task<Device?> GetDeviceAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await httpClient.GetFromJsonAsync<Device>($"/device/{id}", cancellationToken);
+    }
+    
+    public async Task<Device?> CreateDeviceAsync(Device device, CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.PostAsJsonAsync("/device", device, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<Device>(cancellationToken);
+    }
+    
+    public async Task UpdateDeviceAsync(int id, Device device, CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.PutAsJsonAsync($"/device/{id}", device, cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
+    
+    public async Task DeleteDeviceAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.DeleteAsync($"/device/{id}", cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
 
     public async Task<Recipe[]> GetRecipesAsync(CancellationToken cancellationToken = default)
     {

@@ -1,0 +1,31 @@
+@page
+@model BrewIoT.Server.Web.Pages.Devices.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Device</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Device.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Device.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Device.DeviceType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Device.DeviceType)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Device.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

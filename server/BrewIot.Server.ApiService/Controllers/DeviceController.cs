@@ -34,6 +34,33 @@ public class DeviceController : ControllerBase
         }
     }
     
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Device>> GetById(int id)
+    {
+        try
+        {
+            var device = await this.context.Devices.FindAsync(id);
+            
+            if (device is null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(new Device
+            {
+                Id = device.Id,
+                Name = device.Name,
+                DeviceType = (DeviceType)device.DeviceType
+            });
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
+    }
+    
     [HttpGet("readings/{deviceId}")]
     public async Task<IActionResult> GetReadings(int deviceId)
     {
@@ -76,11 +103,14 @@ public class DeviceController : ControllerBase
         {
             var newDevice = new Data.Models.Device
             {
-                Name = device.Name
+                Name = device.Name,
+                DeviceType = (Data.Models.DeviceType)(int)device.DeviceType
             };
             
             context.Devices.Add(newDevice);
             await context.SaveChangesAsync();
+            
+            device.Id = newDevice.Id;
             
             return Ok(device);
         }
@@ -89,6 +119,58 @@ public class DeviceController : ControllerBase
             logger.LogError(e.Message);
             
             return  StatusCode(500);
+        }
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] Device device)
+    {
+        try
+        {
+            var existingDevice = await context.Devices.FindAsync(id);
+            
+            if (existingDevice is null)
+            {
+                return NotFound();
+            }
+            
+            existingDevice.Name = device.Name;
+            existingDevice.DeviceType = (Data.Models.DeviceType)(int)device.DeviceType;
+            
+            await context.SaveChangesAsync();
+            
+            return Ok(device);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
+        }
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var device = await context.Devices.FindAsync(id);
+            
+            if (device is null)
+            {
+                return NotFound();
+            }
+            
+            context.Devices.Remove(device);
+            await context.SaveChangesAsync();
+            
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e.Message);
+            
+            return StatusCode(500);
         }
     }
     
