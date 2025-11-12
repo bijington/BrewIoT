@@ -23,26 +23,42 @@
         
         <CollectionView.EmptyView>
             <Label 
-                Text="{Binding NoRecipesMessage}" />
+                Text="{Binding NoRecipesMessage}"
+                Margin="10" />
         </CollectionView.EmptyView>
         
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="models:Recipe">
-                <Grid ColumnDefinitions="*,*,*">
-                    <Label
-                        Text="{Binding Name}"
-                        FontSize="16" />
-                    
-                    <Label 
-                        Text="{Binding Version}"
-                        FontSize="16"
-                        Grid.Column="1" />
-                    
-                    <Label 
-                        Text="{Binding Steps.Count}"
-                        FontSize="16"
-                        Grid.Column="2" />
-                </Grid>
+                <SwipeView>
+                    <SwipeView.RightItems>
+                        <SwipeItems>
+                            <SwipeItem 
+                                Text="Delete"
+                                BackgroundColor="Red"
+                                Command="{Binding DeleteRecipeCommand, Source={RelativeSource AncestorType={x:Type viewModels:RecipeListPageViewModel}}}"
+                                CommandParameter="{Binding}" />
+                        </SwipeItems>
+                    </SwipeView.RightItems>
+                    <Grid ColumnDefinitions="*,Auto,Auto" Padding="10,5">
+                        <Label
+                            Text="{Binding Name}"
+                            FontSize="16"
+                            VerticalOptions="Center" />
+                        
+                        <Label 
+                            Text="{Binding Version, StringFormat='v{0}'}"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            Grid.Column="1"
+                            Margin="10,0" />
+                        
+                        <Label 
+                            Text="{Binding Steps.Count, StringFormat='{0} steps'}"
+                            FontSize="14"
+                            VerticalOptions="Center"
+                            Grid.Column="2" />
+                    </Grid>
+                </SwipeView>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

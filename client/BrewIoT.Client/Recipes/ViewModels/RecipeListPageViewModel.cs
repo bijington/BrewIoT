@@ -23,6 +23,11 @@ public partial class RecipeListPageViewModel : ObservableObject
 
     public async void OnNavigatedTo()
     {
+        await LoadRecipes();
+    }
+    
+    private async Task LoadRecipes()
+    {
         try
         {
             var availableRecipes = await recipeApiService.GetRecipes();
@@ -33,7 +38,6 @@ public partial class RecipeListPageViewModel : ObservableObject
         {
             Console.WriteLine(e);
             NoRecipesMessage = e.Message;
-            throw;
         }
     }
     
@@ -66,6 +70,30 @@ public partial class RecipeListPageViewModel : ObservableObject
         {
             Console.WriteLine(e);
             throw;
+        }
+    }
+    
+    [RelayCommand]
+    private async Task OnDeleteRecipe(Recipe recipe)
+    {
+        try
+        {
+            bool confirmed = await Shell.Current.DisplayAlert(
+                "Delete Recipe",
+                $"Are you sure you want to delete '{recipe.Name}'?",
+                "Delete",
+                "Cancel");
+            
+            if (confirmed)
+            {
+                await recipeApiService.DeleteRecipe(recipe.Id);
+                await LoadRecipes();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            await Shell.Current.DisplayAlert("Error", $"Failed to delete recipe: {e.Message}", "OK");
         }
     }
 }
